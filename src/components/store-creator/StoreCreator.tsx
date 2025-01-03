@@ -35,24 +35,13 @@ export type Product = {
   discount: number;
 };
 
-const StoreCreator = () => {
+interface StoreCreatorProps {
+  storeData: StoreData;
+  setStoreData: (data: StoreData) => void;
+}
+
+const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [storeData, setStoreData] = useState<StoreData>({
-    type: "",
-    name: "",
-    logo: "",
-    cover: "",
-    sector: "",
-    address: "",
-    contact: "",
-    shippingPolicy: "",
-    refundPolicy: "",
-    country: "",
-    theme: "",
-    paymentMethods: [],
-    deliveryMethods: [],
-    products: [],
-  });
   const { toast } = useToast();
 
   const handleNext = () => {
