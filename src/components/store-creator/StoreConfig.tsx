@@ -71,21 +71,23 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
             />
           </div>
 
-          <ImageUpload
-            label="Logo de la boutique"
-            onImageSelect={(image) =>
-              setStoreData({ ...storeData, logo: image })
-            }
-            defaultImage={storeData.logo}
-          />
+          <div>
+            <Label>Logo de la boutique</Label>
+            <ImageUpload
+              value={storeData.logo}
+              onChange={(url) => setStoreData({ ...storeData, logo: url })}
+              label="Logo de la boutique"
+            />
+          </div>
 
-          <ImageUpload
-            label="Image de couverture"
-            onImageSelect={(image) =>
-              setStoreData({ ...storeData, cover: image })
-            }
-            defaultImage={storeData.cover}
-          />
+          <div>
+            <Label>Image de couverture</Label>
+            <ImageUpload
+              value={storeData.cover}
+              onChange={(url) => setStoreData({ ...storeData, cover: url })}
+              label="Image de couverture"
+            />
+          </div>
 
           <div>
             <Label htmlFor="sector">Secteur d'activité</Label>
