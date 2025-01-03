@@ -3,13 +3,13 @@ import { Upload, Image as ImageIcon } from "lucide-react";
 import { Button } from "./button";
 
 interface ImageUploadProps {
-  onImageSelect: (image: string) => void;
-  defaultImage?: string;
-  label: string;
+  value?: string;
+  onChange: (url: string) => void;
+  label?: string;
 }
 
-const ImageUpload = ({ onImageSelect, defaultImage, label }: ImageUploadProps) => {
-  const [preview, setPreview] = useState<string>(defaultImage || "");
+const ImageUpload = ({ value, onChange, label }: ImageUploadProps) => {
+  const [preview, setPreview] = useState<string>(value || "");
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -18,7 +18,7 @@ const ImageUpload = ({ onImageSelect, defaultImage, label }: ImageUploadProps) =
       reader.onloadend = () => {
         const result = reader.result as string;
         setPreview(result);
-        onImageSelect(result);
+        onChange(result);
       };
       reader.readAsDataURL(file);
     }
@@ -26,7 +26,7 @@ const ImageUpload = ({ onImageSelect, defaultImage, label }: ImageUploadProps) =
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
       <div
         className={`border-2 border-dashed rounded-lg p-4 text-center ${
           preview ? "border-primary" : "border-gray-300"

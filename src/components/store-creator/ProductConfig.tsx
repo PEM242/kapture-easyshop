@@ -137,6 +137,7 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
             <ImageUpload
               value={newProduct.image}
               onChange={(url) => setNewProduct({ ...newProduct, image: url })}
+              label="Image du produit"
             />
           </div>
 
