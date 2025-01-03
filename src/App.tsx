@@ -11,7 +11,7 @@ import { StoreData } from "./components/store-creator/StoreCreator";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [storeData] = useState<StoreData>({
+  const [storeData, setStoreData] = useState<StoreData>({
     type: "",
     name: "",
     logo: "",
@@ -35,7 +35,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Index storeData={storeData} setStoreData={setStoreData} />} />
             <Route path="/store/:storeId" element={<StoreFront storeData={storeData} />} />
           </Routes>
         </BrowserRouter>
