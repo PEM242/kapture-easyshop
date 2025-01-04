@@ -11,18 +11,46 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button') => {
     const storeType = storeData.type === 'retail' || storeData.type === 'artisan' ? 'retail' : 'restaurant';
-    const themeNumber = storeData.theme.replace('theme', '') as '1' | '2' | '3';
+    const themeNumber = storeData.theme.replace('theme', '');
+    
+    const theme = {
+      retail: {
+        theme1: {
+          header: 'bg-black text-white',
+          footer: 'bg-black text-gray-400',
+          button: 'bg-gray-400 text-black hover:bg-gray-600',
+        },
+        theme2: {
+          header: 'bg-blue-600 text-white',
+          footer: 'bg-blue-200 text-blue-600',
+          button: 'bg-blue-200 text-white hover:bg-blue-800',
+        },
+        theme3: {
+          header: 'bg-green-500 text-white',
+          footer: 'bg-green-200 text-green-500',
+          button: 'bg-green-200 text-white hover:bg-green-700',
+        },
+      },
+      restaurant: {
+        theme1: {
+          header: 'bg-black text-white',
+          footer: 'bg-gray-400 text-black',
+          button: 'bg-black text-white hover:bg-gray-700',
+        },
+        theme2: {
+          header: 'bg-red-600 text-white',
+          footer: 'bg-orange-200 text-red-600',
+          button: 'bg-orange-200 text-white hover:bg-red-800',
+        },
+        theme3: {
+          header: 'bg-olive text-white',
+          footer: 'bg-beige text-olive',
+          button: 'bg-beige text-olive hover:bg-olive-dark',
+        },
+      },
+    };
 
-    switch (element) {
-      case 'header':
-        return `bg-themes-${storeType}-${themeNumber}-primary text-white`;
-      case 'footer':
-        return `bg-themes-${storeType}-${themeNumber}-footer text-themes-${storeType}-${themeNumber}-footerText`;
-      case 'button':
-        return `bg-themes-${storeType}-${themeNumber}-buttonBg text-themes-${storeType}-${themeNumber}-buttonText hover:bg-themes-${storeType}-${themeNumber}-buttonHover transition-colors`;
-      default:
-        return '';
-    }
+    return theme[storeType][`theme${themeNumber}`][element];
   };
 
   return (
