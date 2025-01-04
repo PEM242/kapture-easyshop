@@ -31,14 +31,14 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route index element={<Index storeData={storeData} setStoreData={setStoreData} />} />
+            <Route path="/" element={<Index storeData={storeData} setStoreData={setStoreData} />} />
             <Route path="/store/:storeId" element={<StoreFront storeData={storeData} />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
+          <Toaster />
+          <Sonner />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

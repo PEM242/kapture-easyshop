@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { StoreData, Product } from "./StoreCreator";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductConfigProps {
   storeData: StoreData;
@@ -24,8 +25,8 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
     customization: [],
     discount: 0,
   });
-  const [generatedLink, setGeneratedLink] = useState<string>("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.price || !newProduct.description) {
@@ -70,14 +71,15 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
 
     // Génération d'un identifiant unique pour la boutique
     const storeId = Math.random().toString(36).substring(2, 15);
-    const storeLink = `${window.location.origin}/store/${storeId}`;
-    setGeneratedLink(storeLink);
-
+    
     toast({
       title: "Boutique créée avec succès !",
       description: "Votre boutique est maintenant accessible en ligne.",
       variant: "default",
     });
+
+    // Navigation vers la page de la boutique
+    navigate(`/store/${storeId}`);
   };
 
   return (
@@ -189,20 +191,6 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
             Valider et Créer Ma Boutique
           </Button>
         </div>
-
-        {generatedLink && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <p className="font-medium mb-2">Votre boutique est prête !</p>
-            <a
-              href={generatedLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline break-all"
-            >
-              {generatedLink}
-            </a>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -9,10 +9,12 @@ interface StoreFrontProps {
 
 const StoreFront = ({ storeData }: StoreFrontProps) => {
   const getThemeClasses = (element: 'header' | 'footer' | 'button') => {
+    if (!storeData.type || !storeData.theme) return '';
+
     const storeType = storeData.type === 'retail' || storeData.type === 'artisan' ? 'retail' : 'restaurant';
     const themeNumber = storeData.theme.replace('theme', '');
     
-    const theme = {
+    const themes = {
       retail: {
         theme1: {
           header: 'bg-black text-white',
@@ -49,8 +51,16 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
       },
     };
 
-    return theme[storeType][`theme${themeNumber}`][element];
+    return themes[storeType]?.[`theme${themeNumber}`]?.[element] || '';
   };
+
+  if (!storeData.type || !storeData.name) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl text-gray-600">Boutique non trouvée</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
