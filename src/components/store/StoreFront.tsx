@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { StoreData } from "../store-creator/StoreCreator";
+import { cn } from "@/lib/utils";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -8,27 +9,26 @@ interface StoreFrontProps {
 const StoreFront = ({ storeData }: StoreFrontProps) => {
   const { storeId } = useParams();
 
-  const getThemeClasses = () => {
-    switch (storeData.theme) {
-      case "theme1":
-        return "bg-black text-white";
-      case "theme2":
-        return storeData.type === "restaurant" 
-          ? "bg-red-600 text-white" 
-          : "bg-blue-600 text-white";
-      case "theme3":
-        return storeData.type === "restaurant"
-          ? "bg-yellow-400 text-black"
-          : "bg-green-500 text-white";
+  const getThemeClasses = (element: 'header' | 'footer' | 'button') => {
+    const storeType = storeData.type === 'retail' || storeData.type === 'artisan' ? 'retail' : 'restaurant';
+    const themeNumber = storeData.theme.replace('theme', '') as '1' | '2' | '3';
+
+    switch (element) {
+      case 'header':
+        return `bg-themes-${storeType}-${themeNumber}-primary text-white`;
+      case 'footer':
+        return `bg-themes-${storeType}-${themeNumber}-footer text-themes-${storeType}-${themeNumber}-footerText`;
+      case 'button':
+        return `bg-themes-${storeType}-${themeNumber}-buttonBg text-themes-${storeType}-${themeNumber}-buttonText hover:bg-themes-${storeType}-${themeNumber}-buttonHover transition-colors`;
       default:
-        return "bg-white text-black";
+        return '';
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className={`w-full p-4 ${getThemeClasses()} transition-colors duration-300`}>
+      <header className={cn("w-full p-4 transition-colors duration-300", getThemeClasses('header'))}>
         <div className="container mx-auto flex items-center justify-between">
           {storeData.logo && (
             <img src={storeData.logo} alt="Logo" className="h-12 w-auto object-contain" />
@@ -80,7 +80,7 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
                   <h3 className="font-semibold text-lg">{product.name}</h3>
                   <p className="text-gray-600 mt-2">{product.description}</p>
                   <p className="text-lg font-bold mt-2">{product.price} €</p>
-                  <button className={`mt-4 px-4 py-2 rounded-md w-full ${getThemeClasses()} hover:opacity-90 transition-opacity`}>
+                  <button className={cn("mt-4 px-4 py-2 rounded-md w-full", getThemeClasses('button'))}>
                     {storeData.type === "restaurant" ? "Commander" : "Ajouter au panier"}
                   </button>
                 </div>
@@ -91,7 +91,7 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-100 mt-12 py-8">
+      <footer className={cn("py-8", getThemeClasses('footer'))}>
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="font-semibold mb-4">Contact</h3>
