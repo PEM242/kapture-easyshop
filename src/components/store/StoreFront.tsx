@@ -2,12 +2,23 @@ import { StoreData } from "../store-creator/StoreCreator";
 import StoreHeader from "./StoreHeader";
 import StoreFooter from "./StoreFooter";
 import ProductGrid from "./ProductGrid";
+import { useEffect, useState } from "react";
 
 interface StoreFrontProps {
   storeData: StoreData;
 }
 
-const StoreFront = ({ storeData }: StoreFrontProps) => {
+const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
+  const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
+
+  useEffect(() => {
+    // Retrieve store data from localStorage
+    const savedStoreData = localStorage.getItem('storeData');
+    if (savedStoreData) {
+      setStoreData(JSON.parse(savedStoreData));
+    }
+  }, []);
+
   const getThemeClasses = (element: 'header' | 'footer' | 'button') => {
     if (!storeData.type || !storeData.theme) return '';
 

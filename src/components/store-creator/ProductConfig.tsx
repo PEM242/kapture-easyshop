@@ -72,6 +72,9 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
     // Génération d'un identifiant unique pour la boutique
     const storeId = Math.random().toString(36).substring(2, 15);
     
+    // Save store data to localStorage to persist between routes
+    localStorage.setItem('storeData', JSON.stringify(storeData));
+    
     toast({
       title: "Boutique créée avec succès !",
       description: "Votre boutique est maintenant accessible en ligne.",
