@@ -62,18 +62,18 @@ export default {
         },
         // Theme 2: Vibrant et Dynamique
         theme2: {
-          bg: "#E5E5E5",
-          text: "#000000",
-          textAlt: "#007BFF",
+          bg: "#007BFF",
+          text: "#FFFFFF",
+          textAlt: "#E5E5E5",
           button: "#FF6347",
-          buttonHover: "#007BFF",
+          buttonHover: "#FF4500",
         },
         // Theme 3: Nature et Harmonie
         theme3: {
-          bg: "#E0E7E9",
+          bg: "#8BC34A",
           text: "#004D40",
           textAlt: "#4E342E",
-          button: "#8BC34A",
+          button: "#689F38",
           buttonHover: "#795548",
         },
       },
