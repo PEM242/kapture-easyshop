@@ -19,6 +19,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   }, []);
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
+    // Ne retourner les thèmes que pour les commerces de détail et artisans
     if (!storeData.theme || (storeData.type !== 'retail' && storeData.type !== 'artisan')) {
       return '';
     }
