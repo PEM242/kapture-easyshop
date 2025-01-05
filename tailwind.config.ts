@@ -57,48 +57,29 @@ export default {
           bg: "#F5F5F5",
           text: "#000000",
           textAlt: "#333333",
-          button: "#F5E9D9",
+          button: "#D3D3D3",
           buttonBorder: "#000000",
         },
         // Theme 2: Vibrant et Dynamique
         theme2: {
           bg: "#E5E5E5",
           text: "#000000",
-          textAlt: "#003366",
-          button: "#007BFF",
-          buttonHover: "#0056b3",
+          textAlt: "#007BFF",
+          button: "#FF6347",
+          buttonHover: "#007BFF",
         },
         // Theme 3: Nature et Harmonie
         theme3: {
           bg: "#E0E7E9",
           text: "#004D40",
           textAlt: "#4E342E",
-          button: "#689F38",
-          buttonHover: "#558B2F",
+          button: "#8BC34A",
+          buttonHover: "#795548",
         },
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        serif: ["Merriweather", "serif"],
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        helvetica: ["Helvetica", "Arial", "sans-serif"],
+        serif: ["Times New Roman", "Georgia", "serif"],
       },
     },
   },

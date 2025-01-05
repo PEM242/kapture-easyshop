@@ -6,6 +6,19 @@ interface ProductGridProps {
 }
 
 const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
+  const getThemeFont = () => {
+    switch (storeData.theme) {
+      case 'theme1':
+        return 'font-helvetica';
+      case 'theme2':
+        return 'font-sans';
+      case 'theme3':
+        return 'font-serif';
+      default:
+        return 'font-sans';
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {storeData.products.slice(0, 6).map((product, index) => (
@@ -23,16 +36,20 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
             />
           )}
           <div className="p-6">
-            <h3 className={`font-semibold text-xl mb-2 ${
-              storeData.theme === 'theme1' ? 'font-sans' : 
-              storeData.theme === 'theme2' ? 'font-sans font-bold' : 
-              'font-serif'
-            }`}>
+            <h3 className={`font-semibold text-xl mb-2 ${getThemeFont()}`}>
               {product.name}
             </h3>
-            <p className="text-gray-600 mb-4">{product.description}</p>
+            <p className={`mb-4 ${
+              storeData.theme === 'theme1' ? 'text-theme1-textAlt' :
+              storeData.theme === 'theme2' ? 'text-theme2-textAlt' :
+              'text-theme3-textAlt'
+            } ${getThemeFont()}`}>
+              {product.description}
+            </p>
             <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">{product.price} €</span>
+              <span className={`text-xl font-bold ${getThemeFont()}`}>
+                {product.price} €
+              </span>
               <button className={`px-4 py-2 rounded-md ${buttonThemeClass}`}>
                 {storeData.type === "restaurant" ? "Commander" : "Voir détails"}
               </button>

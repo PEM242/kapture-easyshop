@@ -19,28 +19,30 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   }, []);
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
-    if (!storeData.theme) return '';
+    if (!storeData.theme || (storeData.type !== 'retail' && storeData.type !== 'artisan')) {
+      return '';
+    }
 
     const themeStyles = {
       theme1: {
-        header: 'bg-theme1-bg text-theme1-text border-b border-theme1-buttonBorder',
-        footer: 'bg-theme1-bg text-theme1-textAlt border-t border-theme1-buttonBorder',
-        button: 'bg-theme1-button text-theme1-text border border-theme1-buttonBorder hover:bg-theme1-buttonBorder hover:text-white transition-colors',
-        text: 'text-theme1-text',
+        header: 'bg-theme1-bg text-theme1-text font-helvetica border-b border-theme1-buttonBorder',
+        footer: 'bg-theme1-bg text-theme1-textAlt font-helvetica border-t border-theme1-buttonBorder',
+        button: 'bg-theme1-button text-theme1-text border-2 border-theme1-buttonBorder hover:bg-theme1-buttonBorder hover:text-white transition-colors font-helvetica',
+        text: 'text-theme1-text font-helvetica',
         background: 'bg-theme1-bg',
       },
       theme2: {
-        header: 'bg-theme2-bg text-theme2-text shadow-md',
-        footer: 'bg-theme2-bg text-theme2-textAlt',
-        button: 'bg-theme2-button text-white hover:bg-theme2-buttonHover transition-colors',
+        header: 'bg-theme2-bg text-theme2-text font-sans shadow-md',
+        footer: 'bg-theme2-bg text-theme2-textAlt font-serif',
+        button: 'bg-theme2-button text-white hover:bg-theme2-buttonHover transition-colors font-sans',
         text: 'text-theme2-text',
         background: 'bg-theme2-bg',
       },
       theme3: {
-        header: 'bg-theme3-bg text-theme3-text',
-        footer: 'bg-theme3-bg text-theme3-textAlt',
-        button: 'bg-theme3-button text-white hover:bg-theme3-buttonHover transition-colors',
-        text: 'text-theme3-text',
+        header: 'bg-theme3-bg text-theme3-text font-serif',
+        footer: 'bg-theme3-bg text-theme3-textAlt font-serif',
+        button: 'bg-theme3-button text-white hover:bg-theme3-buttonHover transition-colors font-serif',
+        text: 'text-theme3-text font-serif',
         background: 'bg-theme3-bg',
       },
     };
@@ -73,8 +75,8 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
               <h2 className={`text-4xl font-bold text-white text-center px-4 ${
-                storeData.theme === 'theme1' ? 'font-sans' : 
-                storeData.theme === 'theme2' ? 'font-sans font-bold' : 
+                storeData.theme === 'theme1' ? 'font-helvetica' : 
+                storeData.theme === 'theme2' ? 'font-sans' : 
                 'font-serif'
               }`}>
                 Bienvenue chez {storeData.name}
@@ -84,11 +86,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
         )}
 
         <section className="container mx-auto py-16 px-4">
-          <h2 className={`text-3xl font-semibold mb-8 text-center ${getThemeClasses('text')} ${
-            storeData.theme === 'theme1' ? 'font-sans' : 
-            storeData.theme === 'theme2' ? 'font-sans font-bold' : 
-            'font-serif'
-          }`}>
+          <h2 className={`text-3xl font-semibold mb-8 text-center ${getThemeClasses('text')}`}>
             {storeData.type === "restaurant" ? "Notre Menu" : "Nos Produits en Vedette"}
           </h2>
           <ProductGrid 
