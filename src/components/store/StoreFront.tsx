@@ -26,25 +26,25 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
 
     const themeStyles = {
       theme1: {
-        header: 'bg-theme1-bg text-theme1-text font-helvetica border-b border-theme1-buttonBorder',
-        footer: 'bg-theme1-bg text-theme1-textAlt font-helvetica border-t border-theme1-buttonBorder',
+        header: 'bg-theme1-bg text-theme1-text font-helvetica',
+        footer: 'bg-theme1-bg text-theme1-textAlt font-helvetica',
         button: 'bg-theme1-button text-theme1-text border-2 border-theme1-buttonBorder hover:bg-theme1-buttonBorder hover:text-white transition-colors font-helvetica',
         text: 'text-theme1-text font-helvetica',
-        background: 'bg-theme1-bg',
+        background: 'bg-white',
       },
       theme2: {
-        header: 'bg-theme2-bg text-theme2-text font-sans shadow-md',
+        header: 'bg-theme2-bg text-theme2-text font-sans',
         footer: 'bg-theme2-bg text-theme2-textAlt font-serif',
         button: 'bg-theme2-button text-white hover:bg-theme2-buttonHover transition-colors font-sans',
         text: 'text-theme2-text',
-        background: 'bg-theme2-bg',
+        background: 'bg-white',
       },
       theme3: {
         header: 'bg-theme3-bg text-theme3-text font-serif',
         footer: 'bg-theme3-bg text-theme3-textAlt font-serif',
         button: 'bg-theme3-button text-white hover:bg-theme3-buttonHover transition-colors font-serif',
         text: 'text-theme3-text font-serif',
-        background: 'bg-theme3-bg',
+        background: 'bg-white',
       },
     };
 
@@ -60,13 +60,13 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col ${getThemeClasses('background')}`}>
+    <div className="min-h-screen flex flex-col">
       <StoreHeader 
         storeData={storeData} 
         themeClasses={getThemeClasses('header')} 
       />
 
-      <main className="flex-grow">
+      <main className="flex-grow bg-white">
         {storeData.cover && (
           <div className="relative h-[400px] w-full overflow-hidden">
             <img
