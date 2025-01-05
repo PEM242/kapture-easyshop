@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import { StoreData } from "../store-creator/StoreCreator";
 import StoreHeader from "./StoreHeader";
 import StoreFooter from "./StoreFooter";
 import ProductGrid from "./ProductGrid";
-import { useEffect, useState } from "react";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -12,57 +12,40 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
 
   useEffect(() => {
-    // Retrieve store data from localStorage
     const savedStoreData = localStorage.getItem('storeData');
     if (savedStoreData) {
       setStoreData(JSON.parse(savedStoreData));
     }
   }, []);
 
-  const getThemeClasses = (element: 'header' | 'footer' | 'button') => {
-    if (!storeData.type || !storeData.theme) return '';
+  const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
+    if (!storeData.theme) return '';
 
-    const storeType = storeData.type === 'retail' || storeData.type === 'artisan' ? 'retail' : 'restaurant';
-    const themeNumber = storeData.theme.replace('theme', '');
-    
-    const themes = {
-      retail: {
-        theme1: {
-          header: 'bg-black text-white',
-          footer: 'bg-black text-gray-400',
-          button: 'bg-gray-400 text-black hover:bg-gray-600',
-        },
-        theme2: {
-          header: 'bg-blue-600 text-white',
-          footer: 'bg-blue-200 text-blue-600',
-          button: 'bg-blue-200 text-blue-600 hover:bg-blue-800 hover:text-white',
-        },
-        theme3: {
-          header: 'bg-green-500 text-white',
-          footer: 'bg-green-200 text-green-500',
-          button: 'bg-green-200 text-green-500 hover:bg-green-700 hover:text-white',
-        },
+    const themeStyles = {
+      theme1: {
+        header: 'bg-theme1-bg text-theme1-text border-b border-theme1-buttonBorder',
+        footer: 'bg-theme1-bg text-theme1-textAlt border-t border-theme1-buttonBorder',
+        button: 'bg-theme1-button text-theme1-text border border-theme1-buttonBorder hover:bg-theme1-buttonBorder hover:text-white transition-colors',
+        text: 'text-theme1-text',
+        background: 'bg-theme1-bg',
       },
-      restaurant: {
-        theme1: {
-          header: 'bg-black text-white',
-          footer: 'bg-gray-400 text-black',
-          button: 'bg-black text-white hover:bg-gray-700',
-        },
-        theme2: {
-          header: 'bg-red-600 text-white',
-          footer: 'bg-orange-200 text-red-600',
-          button: 'bg-orange-200 text-red-600 hover:bg-red-800 hover:text-white',
-        },
-        theme3: {
-          header: 'bg-olive text-white',
-          footer: 'bg-beige text-olive',
-          button: 'bg-beige text-olive hover:bg-olive-dark hover:text-white',
-        },
+      theme2: {
+        header: 'bg-theme2-bg text-theme2-text shadow-md',
+        footer: 'bg-theme2-bg text-theme2-textAlt',
+        button: 'bg-theme2-button text-white hover:bg-theme2-buttonHover transition-colors',
+        text: 'text-theme2-text',
+        background: 'bg-theme2-bg',
+      },
+      theme3: {
+        header: 'bg-theme3-bg text-theme3-text',
+        footer: 'bg-theme3-bg text-theme3-textAlt',
+        button: 'bg-theme3-button text-white hover:bg-theme3-buttonHover transition-colors',
+        text: 'text-theme3-text',
+        background: 'bg-theme3-bg',
       },
     };
 
-    return themes[storeType]?.[`theme${themeNumber}`]?.[element] || '';
+    return themeStyles[storeData.theme as keyof typeof themeStyles]?.[element] || '';
   };
 
   if (!storeData.type || !storeData.name) {
@@ -74,7 +57,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className={`min-h-screen flex flex-col ${getThemeClasses('background')}`}>
       <StoreHeader 
         storeData={storeData} 
         themeClasses={getThemeClasses('header')} 
@@ -89,7 +72,11 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-              <h2 className="text-4xl font-bold text-white text-center px-4">
+              <h2 className={`text-4xl font-bold text-white text-center px-4 ${
+                storeData.theme === 'theme1' ? 'font-sans' : 
+                storeData.theme === 'theme2' ? 'font-sans font-bold' : 
+                'font-serif'
+              }`}>
                 Bienvenue chez {storeData.name}
               </h2>
             </div>
@@ -97,7 +84,11 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
         )}
 
         <section className="container mx-auto py-16 px-4">
-          <h2 className="text-3xl font-semibold mb-8 text-center">
+          <h2 className={`text-3xl font-semibold mb-8 text-center ${getThemeClasses('text')} ${
+            storeData.theme === 'theme1' ? 'font-sans' : 
+            storeData.theme === 'theme2' ? 'font-sans font-bold' : 
+            'font-serif'
+          }`}>
             {storeData.type === "restaurant" ? "Notre Menu" : "Nos Produits en Vedette"}
           </h2>
           <ProductGrid 

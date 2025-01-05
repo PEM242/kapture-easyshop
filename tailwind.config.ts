@@ -52,9 +52,34 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        olive: "#808000",
-        "olive-dark": "#666600",
-        beige: "#F5F5DC",
+        // Theme 1: Élégance Minimaliste
+        theme1: {
+          bg: "#F5F5F5",
+          text: "#000000",
+          textAlt: "#333333",
+          button: "#F5E9D9",
+          buttonBorder: "#000000",
+        },
+        // Theme 2: Vibrant et Dynamique
+        theme2: {
+          bg: "#E5E5E5",
+          text: "#000000",
+          textAlt: "#003366",
+          button: "#007BFF",
+          buttonHover: "#0056b3",
+        },
+        // Theme 3: Nature et Harmonie
+        theme3: {
+          bg: "#E0E7E9",
+          text: "#004D40",
+          textAlt: "#4E342E",
+          button: "#689F38",
+          buttonHover: "#558B2F",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+        serif: ["Merriweather", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

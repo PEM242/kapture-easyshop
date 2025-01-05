@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { StoreData } from "../store-creator/StoreCreator";
 
 interface ProductGridProps {
@@ -12,7 +11,9 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
       {storeData.products.slice(0, 6).map((product, index) => (
         <div
           key={index}
-          className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ${
+            storeData.theme === 'theme1' ? 'border border-theme1-buttonBorder' : ''
+          }`}
         >
           {product.image && (
             <img
@@ -22,11 +23,17 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
             />
           )}
           <div className="p-6">
-            <h3 className="font-semibold text-xl mb-2">{product.name}</h3>
+            <h3 className={`font-semibold text-xl mb-2 ${
+              storeData.theme === 'theme1' ? 'font-sans' : 
+              storeData.theme === 'theme2' ? 'font-sans font-bold' : 
+              'font-serif'
+            }`}>
+              {product.name}
+            </h3>
             <p className="text-gray-600 mb-4">{product.description}</p>
             <div className="flex items-center justify-between">
               <span className="text-xl font-bold">{product.price} €</span>
-              <button className={`px-4 py-2 rounded-md transition-colors duration-300 ${buttonThemeClass}`}>
+              <button className={`px-4 py-2 rounded-md ${buttonThemeClass}`}>
                 {storeData.type === "restaurant" ? "Commander" : "Voir détails"}
               </button>
             </div>
