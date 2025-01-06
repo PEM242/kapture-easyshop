@@ -20,37 +20,37 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {storeData.products.map((product, index) => (
         <div
           key={index}
-          className={`bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${
-            storeData.theme === 'theme1' ? 'border border-theme1-buttonBorder' : ''
-          }`}
+          className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
         >
-          {product.image && (
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-32 md:h-48 object-cover"
-            />
-          )}
-          <div className="p-3 md:p-6">
-            <h3 className={`font-semibold text-base md:text-xl mb-2 ${getThemeFont()}`}>
+          <div className="aspect-square relative overflow-hidden">
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                <span className="text-sm text-gray-400">No image</span>
+              </div>
+            )}
+          </div>
+          <div className="p-3">
+            <h3 className={`font-medium text-sm md:text-base mb-1 ${getThemeFont()}`}>
               {product.name}
             </h3>
-            <p className={`mb-4 text-sm md:text-base ${
-              storeData.theme === 'theme1' ? 'text-theme1-textAlt' :
-              storeData.theme === 'theme2' ? 'text-theme2-textAlt' :
-              'text-theme3-textAlt'
-            } ${getThemeFont()}`}>
+            <p className={`text-xs md:text-sm text-gray-600 mb-2 line-clamp-2 ${getThemeFont()}`}>
               {product.description}
             </p>
             <div className="flex items-center justify-between">
-              <span className={`text-lg md:text-xl font-bold ${getThemeFont()}`}>
+              <span className={`text-sm md:text-base font-semibold ${getThemeFont()}`}>
                 {product.price} €
               </span>
-              <button className={`px-3 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${buttonThemeClass}`}>
+              <button className={`text-xs md:text-sm px-3 py-1 rounded-md ${buttonThemeClass}`}>
                 {storeData.type === "restaurant" ? "Commander" : "Voir détails"}
               </button>
             </div>

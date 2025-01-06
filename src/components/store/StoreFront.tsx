@@ -4,8 +4,7 @@ import StoreHeader from "./StoreHeader";
 import StoreFooter from "./StoreFooter";
 import ProductGrid from "./ProductGrid";
 import MobileNav from "./MobileNav";
-import { Card, CardContent } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -71,55 +70,61 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
 
       <main className="flex-grow bg-white">
         {storeData.cover && (
-          <div className="relative h-48 md:h-[400px] w-full overflow-hidden">
+          <div className="relative h-32 md:h-48 w-full overflow-hidden">
             <img
               src={storeData.cover}
               alt="Couverture"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-              <h2 className={`text-2xl md:text-4xl font-bold text-white text-center px-4 ${
+              <h2 className={`text-xl md:text-3xl font-bold text-white text-center px-4 ${
                 storeData.theme === 'theme1' ? 'font-helvetica' : 
                 storeData.theme === 'theme2' ? 'font-sans' : 
                 'font-serif'
               }`}>
-                Bienvenue chez {storeData.name}
+                {storeData.name}
               </h2>
             </div>
           </div>
         )}
 
         {featuredProducts.length > 0 && (
-          <section className="py-6 px-4">
-            <h3 className={`text-xl font-semibold mb-4 ${getThemeClasses('text')}`}>
-              En vedette
+          <section className="py-4 px-4">
+            <h3 className={`text-lg md:text-xl font-semibold mb-4 ${getThemeClasses('text')}`}>
+              {storeData.type === 'restaurant' ? 'Plats en vedette' : 'Produits en vedette'}
             </h3>
-            <ScrollArea className="w-full whitespace-nowrap">
-              <div className="flex space-x-4">
+            <ScrollArea className="w-full">
+              <div className="flex gap-4 pb-4">
                 {featuredProducts.map((product, index) => (
-                  <Card key={index} className="w-32 flex-shrink-0">
-                    <CardContent className="p-2">
-                      {product.image && (
+                  <div 
+                    key={index} 
+                    className="flex-shrink-0"
+                  >
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-gray-200 relative">
+                      {product.image ? (
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-32 object-cover rounded-md"
+                          className="w-full h-full object-cover"
                         />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                          <span className="text-xs text-gray-400">No image</span>
+                        </div>
                       )}
-                      <p className="text-sm font-medium mt-2 truncate">
-                        {product.name}
-                      </p>
-                    </CardContent>
-                  </Card>
+                    </div>
+                    <p className="text-xs text-center mt-1 truncate max-w-[80px]">
+                      {product.name}
+                    </p>
+                  </div>
                 ))}
               </div>
-              <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </section>
         )}
 
-        <section className="container mx-auto py-8 px-4">
-          <h2 className={`text-2xl font-semibold mb-6 text-center ${getThemeClasses('text')}`}>
+        <section className="container mx-auto py-6 px-4">
+          <h2 className={`text-xl md:text-2xl font-semibold mb-6 text-center ${getThemeClasses('text')}`}>
             {storeData.type === "restaurant" ? "Notre Menu" : "Nos Produits"}
           </h2>
           <ProductGrid 
