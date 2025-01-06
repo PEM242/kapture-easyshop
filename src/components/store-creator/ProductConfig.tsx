@@ -69,20 +69,16 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       return;
     }
 
-    // Génération d'un identifiant unique pour la boutique
-    const storeId = Math.random().toString(36).substring(2, 15);
-    
-    // Save store data to localStorage to persist between routes
+    // Save store data to localStorage
     localStorage.setItem('storeData', JSON.stringify(storeData));
     
     toast({
       title: "Boutique créée avec succès !",
       description: "Votre boutique est maintenant accessible en ligne.",
-      variant: "default",
     });
 
-    // Navigation vers la page de la boutique
-    navigate(`/store/${storeId}`);
+    // Navigate to the store page
+    navigate("/store");
   };
 
   return (
