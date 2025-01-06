@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import StoreType from "./StoreType";
 import StoreConfig from "./StoreConfig";
 import StoreTheme from "./StoreTheme";
 import ProductConfig from "./ProductConfig";
 import ProgressBar from "./ProgressBar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Store } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export type StoreData = {
@@ -42,11 +43,22 @@ interface StoreCreatorProps {
 
 const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isStoreCreated, setIsStoreCreated] = useState(false);
   const { toast } = useToast();
 
   const handleNext = () => {
     if (validateCurrentStep()) {
-      setCurrentStep((prev) => Math.min(prev + 1, 4));
+      if (currentStep === 4) {
+        // Save store data to localStorage
+        localStorage.setItem('storeData', JSON.stringify(storeData));
+        setIsStoreCreated(true);
+        toast({
+          title: "Boutique créée avec succès!",
+          description: "Cliquez sur le lien ci-dessous pour visualiser votre boutique.",
+        });
+      } else {
+        setCurrentStep((prev) => Math.min(prev + 1, 4));
+      }
     }
   };
 
@@ -109,27 +121,41 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
     <div className="form-container">
       <ProgressBar currentStep={currentStep} totalSteps={4} />
       <div className="mt-8 step-transition">{renderStep()}</div>
-      <div className="flex justify-between mt-8">
-        {currentStep > 1 && (
-          <Button
-            onClick={handlePrevious}
-            variant="outline"
-            className="flex items-center gap-2"
+      
+      {isStoreCreated ? (
+        <div className="mt-8 flex flex-col items-center space-y-4">
+          <p className="text-lg text-green-600 font-semibold">
+            Votre boutique a été créée avec succès!
+          </p>
+          <Link
+            to="/store"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Précédent
-          </Button>
-        )}
-        {currentStep < 4 && (
+            <Store className="w-5 h-5" />
+            Voir ma boutique
+          </Link>
+        </div>
+      ) : (
+        <div className="flex justify-between mt-8">
+          {currentStep > 1 && (
+            <Button
+              onClick={handlePrevious}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Précédent
+            </Button>
+          )}
           <Button
             onClick={handleNext}
             className="flex items-center gap-2 ml-auto"
           >
-            Suivant
+            {currentStep === 4 ? "Créer ma boutique" : "Suivant"}
             <ArrowRight className="w-4 h-4" />
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
