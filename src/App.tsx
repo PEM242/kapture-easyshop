@@ -31,10 +31,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/">
           <Routes>
             <Route path="/" element={<Index storeData={storeData} setStoreData={setStoreData} />} />
-            <Route path="/store/:storeId" element={<StoreFront storeData={storeData} />} />
+            <Route path="/store" element={<StoreFront storeData={storeData} />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Toaster />
