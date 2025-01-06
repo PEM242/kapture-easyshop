@@ -19,10 +19,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   }, []);
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
-    // Ne retourner les thèmes que pour les commerces de détail et artisans
-    if (!storeData.theme || (storeData.type !== 'retail' && storeData.type !== 'artisan')) {
-      return '';
-    }
+    if (!storeData.theme) return '';
 
     const themeStyles = {
       theme1: {
@@ -66,7 +63,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
         themeClasses={getThemeClasses('header')} 
       />
 
-      <main className="flex-grow bg-white">
+      <main className={`flex-grow ${getThemeClasses('background')}`}>
         {storeData.cover && (
           <div className="relative h-[400px] w-full overflow-hidden">
             <img
