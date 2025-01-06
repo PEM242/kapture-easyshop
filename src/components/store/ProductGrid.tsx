@@ -20,11 +20,11 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {storeData.products.slice(0, 6).map((product, index) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+      {storeData.products.map((product, index) => (
         <div
           key={index}
-          className={`bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ${
+          className={`bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${
             storeData.theme === 'theme1' ? 'border border-theme1-buttonBorder' : ''
           }`}
         >
@@ -32,14 +32,14 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-48 object-cover"
+              className="w-full h-32 md:h-48 object-cover"
             />
           )}
-          <div className="p-6">
-            <h3 className={`font-semibold text-xl mb-2 ${getThemeFont()}`}>
+          <div className="p-3 md:p-6">
+            <h3 className={`font-semibold text-base md:text-xl mb-2 ${getThemeFont()}`}>
               {product.name}
             </h3>
-            <p className={`mb-4 ${
+            <p className={`mb-4 text-sm md:text-base ${
               storeData.theme === 'theme1' ? 'text-theme1-textAlt' :
               storeData.theme === 'theme2' ? 'text-theme2-textAlt' :
               'text-theme3-textAlt'
@@ -47,10 +47,10 @@ const ProductGrid = ({ storeData, buttonThemeClass }: ProductGridProps) => {
               {product.description}
             </p>
             <div className="flex items-center justify-between">
-              <span className={`text-xl font-bold ${getThemeFont()}`}>
+              <span className={`text-lg md:text-xl font-bold ${getThemeFont()}`}>
                 {product.price} €
               </span>
-              <button className={`px-4 py-2 rounded-md ${buttonThemeClass}`}>
+              <button className={`px-3 py-1 md:px-4 md:py-2 rounded-md text-sm md:text-base ${buttonThemeClass}`}>
                 {storeData.type === "restaurant" ? "Commander" : "Voir détails"}
               </button>
             </div>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import type { StoreData, Product } from "./StoreCreator";
@@ -15,16 +16,31 @@ interface ProductConfigProps {
   setStoreData: (data: StoreData) => void;
 }
 
+interface ProductFormState {
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  isFeatured: boolean;
+  collectionName: string;
+  customization: string[];
+  discount: number;
+}
+
 const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
-  const [newProduct, setNewProduct] = useState<Product>({
+  const [newProduct, setNewProduct] = useState<ProductFormState>({
     name: "",
     price: 0,
     description: "",
     image: "",
     category: "",
+    isFeatured: false,
+    collectionName: "",
     customization: [],
     discount: 0,
   });
+
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -38,9 +54,16 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       return;
     }
 
+    const productToAdd: Product = {
+      ...newProduct,
+      featured: newProduct.isFeatured ? {
+        collectionName: newProduct.collectionName
+      } : undefined
+    };
+
     setStoreData({
       ...storeData,
-      products: [...storeData.products, newProduct],
+      products: [...storeData.products, productToAdd],
     });
 
     setNewProduct({
@@ -49,6 +72,8 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       description: "",
       image: "",
       category: "",
+      isFeatured: false,
+      collectionName: "",
       customization: [],
       discount: 0,
     });
@@ -69,15 +94,23 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       return;
     }
 
-    // Save store data to localStorage
     localStorage.setItem('storeData', JSON.stringify(storeData));
     
     toast({
       title: "Boutique créée avec succès !",
-      description: "Votre boutique est maintenant accessible en ligne.",
+      description: (
+        <div className="mt-2">
+          <p>Votre boutique est maintenant accessible en ligne.</p>
+          <a 
+            href="/store"
+            className="text-blue-500 hover:underline mt-2 block"
+          >
+            Cliquez ici pour voir votre boutique
+          </a>
+        </div>
+      ),
     });
 
-    // Navigate to the store page
     navigate("/store");
   };
 
@@ -142,6 +175,31 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
             />
           </div>
 
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="featured"
+              checked={newProduct.isFeatured}
+              onCheckedChange={(checked) =>
+                setNewProduct({ ...newProduct, isFeatured: checked as boolean })
+              }
+            />
+            <Label htmlFor="featured">Ajouter en produit vedette</Label>
+          </div>
+
+          {newProduct.isFeatured && (
+            <div>
+              <Label htmlFor="collectionName">Nom de la collection</Label>
+              <Input
+                id="collectionName"
+                value={newProduct.collectionName}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, collectionName: e.target.value })
+                }
+                placeholder="Nom de la collection"
+              />
+            </div>
+          )}
+
           <Button
             onClick={handleAddProduct}
             className="w-full flex items-center gap-2"
@@ -165,6 +223,11 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
                       <p className="text-sm text-muted-foreground">
                         {product.price} €
                       </p>
+                      {product.featured && (
+                        <p className="text-sm text-blue-500">
+                          Produit vedette - Collection: {product.featured.collectionName}
+                        </p>
+                      )}
                     </div>
                     <Button
                       variant="ghost"
