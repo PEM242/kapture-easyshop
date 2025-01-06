@@ -34,6 +34,9 @@ export type Product = {
   category: string;
   customization: string[];
   discount: number;
+  featured?: {
+    collectionName: string;
+  };
 };
 
 interface StoreCreatorProps {
