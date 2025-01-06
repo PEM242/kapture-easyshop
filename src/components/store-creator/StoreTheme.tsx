@@ -1,12 +1,5 @@
 import { StoreData } from "./StoreCreator";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
@@ -23,23 +16,11 @@ interface Theme {
 }
 
 const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
-  const themes: Record<string, Theme[]> = {
-    retail: [
-      { id: "theme1", name: "Thème 1", bgColor: "bg-black", textColor: "text-white" },
-      { id: "theme2", name: "Thème 2", bgColor: "bg-blue-600", textColor: "text-white" },
-      { id: "theme3", name: "Thème 3", bgColor: "bg-green-500", textColor: "text-white" },
-    ],
-    artisan: [
-      { id: "theme1", name: "Thème 1", bgColor: "bg-black", textColor: "text-white" },
-      { id: "theme2", name: "Thème 2", bgColor: "bg-blue-600", textColor: "text-white" },
-      { id: "theme3", name: "Thème 3", bgColor: "bg-green-500", textColor: "text-white" },
-    ],
-    restaurant: [
-      { id: "theme1", name: "Thème 1", bgColor: "bg-black", textColor: "text-white" },
-      { id: "theme2", name: "Thème 2", bgColor: "bg-red-600", textColor: "text-white" },
-      { id: "theme3", name: "Thème 3", bgColor: "bg-yellow-400", textColor: "text-black" },
-    ],
-  };
+  const themes: Theme[] = [
+    { id: "theme1", name: "Thème 1", bgColor: "bg-black", textColor: "text-white" },
+    { id: "theme2", name: "Thème 2", bgColor: "bg-blue-600", textColor: "text-white" },
+    { id: "theme3", name: "Thème 3", bgColor: "bg-green-500", textColor: "text-white" },
+  ];
 
   const paymentMethods = [
     { id: "store", label: "Paiement en boutique" },
@@ -79,8 +60,6 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
     }
   };
 
-  const currentThemes = themes[storeData.type === "retail" || storeData.type === "artisan" ? "retail" : "restaurant"] || [];
-
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-2xl font-semibold text-center mb-8">
@@ -91,7 +70,7 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
         <div className="space-y-4">
           <Label>Thème</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {currentThemes.map((theme) => (
+            {themes.map((theme) => (
               <button
                 key={theme.id}
                 onClick={() => setStoreData({ ...storeData, theme: theme.id })}

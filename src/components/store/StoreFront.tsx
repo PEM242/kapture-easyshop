@@ -63,7 +63,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
         themeClasses={getThemeClasses('header')} 
       />
 
-      <main className={`flex-grow ${getThemeClasses('background')}`}>
+      <main className="flex-grow bg-white">
         {storeData.cover && (
           <div className="relative h-[400px] w-full overflow-hidden">
             <img
