@@ -41,7 +41,16 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index storeData={storeData} setStoreData={setStoreData} />} />
-            <Route path="/store" element={<StoreFront storeData={storeData} />} />
+            <Route 
+              path="/store" 
+              element={
+                storeData.name ? (
+                  <StoreFront storeData={storeData} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              } 
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Toaster />
