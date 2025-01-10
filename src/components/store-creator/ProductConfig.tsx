@@ -36,8 +36,27 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       return;
     }
 
+    // Sauvegarder les données actuelles
     localStorage.setItem('storeData', JSON.stringify(storeData));
     
+    // Réinitialiser le formulaire
+    setStoreData({
+      type: "",
+      name: "",
+      logo: "",
+      cover: "",
+      sector: "",
+      address: "",
+      contact: "",
+      shippingPolicy: "",
+      refundPolicy: "",
+      country: "",
+      theme: "",
+      paymentMethods: [],
+      deliveryMethods: [],
+      products: [],
+    });
+
     toast({
       title: "Boutique créée avec succès !",
       description: (
