@@ -21,6 +21,14 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     if (savedStoreData) {
       setStoreData(JSON.parse(savedStoreData));
     }
+
+    // Listen for cart open events
+    const handleOpenCart = () => setIsCartOpen(true);
+    document.addEventListener('openCart', handleOpenCart);
+    
+    return () => {
+      document.removeEventListener('openCart', handleOpenCart);
+    };
   }, []);
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
