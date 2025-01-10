@@ -7,6 +7,9 @@ import MobileNav from "./MobileNav";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CartProvider } from "@/contexts/CartContext";
 import CartModal from "./cart/CartModal";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Copy } from "lucide-react";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -15,6 +18,8 @@ interface StoreFrontProps {
 const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
@@ -30,6 +35,42 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       document.removeEventListener('openCart', handleOpenCart);
     };
   }, []);
+
+  const handlePublish = () => {
+    setIsPublished(true);
+    const storeLink = `${window.location.origin}/store/${storeData.name.toLowerCase().replace(/\s+/g, '-')}`;
+    
+    toast({
+      title: "🎉 Félicitations !",
+      description: (
+        <div className="mt-2 space-y-4">
+          <p>Votre boutique est maintenant publiée et accessible en ligne.</p>
+          <div className="flex items-center gap-2 p-2 bg-gray-100 rounded">
+            <span className="text-sm truncate flex-1">{storeLink}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                navigator.clipboard.writeText(storeLink);
+                toast({
+                  title: "Lien copié !",
+                  description: "Le lien de votre boutique a été copié dans le presse-papier.",
+                });
+              }}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <Button 
+            className="w-full"
+            onClick={() => window.location.href = "/dashboard"}
+          >
+            Aller au tableau de bord
+          </Button>
+        </div>
+      ),
+    });
+  };
 
   const getThemeClasses = (element: 'header' | 'footer' | 'button' | 'text' | 'background') => {
     if (!storeData.theme) return '';
@@ -151,6 +192,18 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           storeData={storeData} 
           themeClasses={getThemeClasses('footer')} 
         />
+
+        {!isPublished && (
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg">
+            <Button
+              onClick={handlePublish}
+              className="w-full max-w-md mx-auto block"
+              size="lg"
+            >
+              Publier la boutique
+            </Button>
+          </div>
+        )}
 
         <CartModal
           open={isCartOpen}
