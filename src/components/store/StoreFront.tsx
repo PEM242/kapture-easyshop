@@ -10,9 +10,8 @@ import StoreCover from "./sections/StoreCover";
 import FeaturedProducts from "./sections/FeaturedProducts";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -21,25 +20,15 @@ interface StoreFrontProps {
 const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isPublished, setIsPublished] = useState(false);
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
-    // Charger les données du store
     const savedStoreData = localStorage.getItem('storeData');
     if (savedStoreData) {
       setStoreData(JSON.parse(savedStoreData));
     }
 
-    // Vérifier si la boutique est publiée
-    const publishStatus = localStorage.getItem('isStorePublished');
-    if (publishStatus) {
-      setIsPublished(JSON.parse(publishStatus));
-    }
-
-    // Gestionnaire pour le panier
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
@@ -47,31 +36,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       document.removeEventListener('openCart', handleOpenCart);
     };
   }, []);
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: "Lien copié !",
-        description: "Le lien de votre boutique a été copié dans le presse-papier.",
-      });
-    } catch (err) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de copier le lien.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePublish = () => {
-    setIsPublished(true);
-    localStorage.setItem('isStorePublished', 'true');
-    toast({
-      title: "Boutique publiée !",
-      description: "Votre boutique est maintenant visible par tous. Vous pouvez copier le lien pour la partager.",
-    });
-  };
 
   if (!storeData.type || !storeData.name) {
     return (
@@ -84,8 +48,8 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Boutons de navigation - Toujours visibles en haut */}
-        <div className="fixed top-4 left-4 z-50 flex gap-2">
+        {/* Bouton de retour au tableau de bord - Toujours visible en haut */}
+        <div className="fixed top-4 left-4 z-50">
           <Button
             variant="outline"
             size="sm"
@@ -95,17 +59,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Tableau de bord
           </Button>
-          {isPublished && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="bg-white shadow-md hover:bg-gray-100"
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              Partager
-            </Button>
-          )}
         </div>
 
         <StoreHeader 
@@ -142,19 +95,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           storeData={storeData} 
           themeClasses={getThemeClasses('footer')} 
         />
-
-        {/* Bouton de publication - Visible uniquement quand non publié */}
-        {!isPublished && (
-          <div className="fixed bottom-4 right-4 z-50">
-            <Button
-              onClick={handlePublish}
-              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
-              size="lg"
-            >
-              Publier la boutique
-            </Button>
-          </div>
-        )}
 
         <CartModal
           open={isCartOpen}
