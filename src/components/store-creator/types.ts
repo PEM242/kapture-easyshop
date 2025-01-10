@@ -26,33 +26,6 @@ export type Product = {
   };
 };
 
-export type ProductFormState = {
-  name: string;
-  price: number;
-  description: string;
-  images: {
-    main: string;
-    gallery: string[];
-  };
-  category: string;
-  customization: {
-    sizes?: string[];
-    colors?: string[];
-    shoesSizes?: string[];
-    customSizes?: string;
-    customColors?: string;
-  };
-  discount: {
-    type: 'percentage' | 'fixed' | null;
-    value: number;
-    finalPrice: number;
-  };
-  isActive: boolean;
-  inStock: boolean;
-  isFeatured: boolean;
-  collectionName: string;
-};
-
 export type StoreData = {
   type: string;
   name: string;
@@ -60,13 +33,13 @@ export type StoreData = {
   cover: string;
   sector: string;
   address: string;
-  city: string; // Ajout de la propriété city
+  city: string;
   contact: string;
-  shippingPolicy: string;
-  refundPolicy: string;
+  shipping_policy: string;
+  refund_policy: string;
   country: string;
   theme: string;
-  paymentMethods: string[];
-  deliveryMethods: string[];
+  payment_methods: string[];
+  delivery_methods: string[];
   products: Product[];
 };

@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { StoreData } from "./components/store-creator/StoreCreator";
+import { StoreData } from "./components/store-creator/types";
 import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -50,12 +50,12 @@ const App = () => {
     address: "",
     city: "",
     contact: "",
-    shippingPolicy: "",
-    refundPolicy: "",
+    shipping_policy: "",
+    refund_policy: "",
     country: "",
     theme: "",
-    paymentMethods: [],
-    deliveryMethods: [],
+    payment_methods: [],
+    delivery_methods: [],
     products: [],
   });
 

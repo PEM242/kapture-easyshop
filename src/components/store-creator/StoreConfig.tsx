@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ImageUpload from "@/components/ui/ImageUpload";
-import { StoreData } from "./StoreCreator";
+import { StoreData } from "./types";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -143,9 +143,9 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
             <Label htmlFor="shipping">Politique de livraison</Label>
             <Textarea
               id="shipping"
-              value={storeData.shippingPolicy}
+              value={storeData.shipping_policy}
               onChange={(e) =>
-                setStoreData({ ...storeData, shippingPolicy: e.target.value })
+                setStoreData({ ...storeData, shipping_policy: e.target.value })
               }
               placeholder="Décrivez votre politique de livraison"
               className="h-20"
@@ -156,9 +156,9 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
             <Label htmlFor="refund">Politique de remboursement</Label>
             <Textarea
               id="refund"
-              value={storeData.refundPolicy}
+              value={storeData.refund_policy}
               onChange={(e) =>
-                setStoreData({ ...storeData, refundPolicy: e.target.value })
+                setStoreData({ ...storeData, refund_policy: e.target.value })
               }
               placeholder="Décrivez votre politique de remboursement"
               className="h-20"

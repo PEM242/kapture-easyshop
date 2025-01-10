@@ -124,12 +124,12 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
         </div>
 
         <div>
-          <Label htmlFor="shippingPolicy">Politique de livraison</Label>
+          <Label htmlFor="shipping_policy">Politique de livraison</Label>
           <Textarea
-            id="shippingPolicy"
-            value={storeData.shippingPolicy}
+            id="shipping_policy"
+            value={storeData.shipping_policy}
             onChange={(e) =>
-              onUpdateStore({ ...storeData, shippingPolicy: e.target.value })
+              onUpdateStore({ ...storeData, shipping_policy: e.target.value })
             }
             placeholder="Décrivez votre politique de livraison"
             className="h-32"
@@ -137,12 +137,12 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
         </div>
 
         <div>
-          <Label htmlFor="refundPolicy">Politique de retour</Label>
+          <Label htmlFor="refund_policy">Politique de retour</Label>
           <Textarea
-            id="refundPolicy"
-            value={storeData.refundPolicy}
+            id="refund_policy"
+            value={storeData.refund_policy}
             onChange={(e) =>
-              onUpdateStore({ ...storeData, refundPolicy: e.target.value })
+              onUpdateStore({ ...storeData, refund_policy: e.target.value })
             }
             placeholder="Décrivez votre politique de retour"
             className="h-32"

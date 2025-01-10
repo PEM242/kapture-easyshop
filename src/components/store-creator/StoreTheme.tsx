@@ -1,4 +1,4 @@
-import { StoreData } from "./StoreCreator";
+import { StoreData } from "./types";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -8,15 +8,8 @@ interface StoreThemeProps {
   setStoreData: (data: StoreData) => void;
 }
 
-interface Theme {
-  id: string;
-  name: string;
-  bgColor: string;
-  textColor: string;
-}
-
 const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
-  const themes: Theme[] = [
+  const themes = [
     { id: "theme1", name: "Thème 1", bgColor: "bg-black", textColor: "text-white" },
     { id: "theme2", name: "Thème 2", bgColor: "bg-blue-600", textColor: "text-white" },
     { id: "theme3", name: "Thème 3", bgColor: "bg-green-500", textColor: "text-white" },
@@ -36,12 +29,12 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
     if (checked) {
       setStoreData({
         ...storeData,
-        paymentMethods: [...storeData.paymentMethods, methodId],
+        payment_methods: [...storeData.payment_methods, methodId],
       });
     } else {
       setStoreData({
         ...storeData,
-        paymentMethods: storeData.paymentMethods.filter((id) => id !== methodId),
+        payment_methods: storeData.payment_methods.filter((id) => id !== methodId),
       });
     }
   };
@@ -50,12 +43,12 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
     if (checked) {
       setStoreData({
         ...storeData,
-        deliveryMethods: [...storeData.deliveryMethods, methodId],
+        delivery_methods: [...storeData.delivery_methods, methodId],
       });
     } else {
       setStoreData({
         ...storeData,
-        deliveryMethods: storeData.deliveryMethods.filter((id) => id !== methodId),
+        delivery_methods: storeData.delivery_methods.filter((id) => id !== methodId),
       });
     }
   };
@@ -98,7 +91,7 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
               <div key={method.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={`payment-${method.id}`}
-                  checked={storeData.paymentMethods.includes(method.id)}
+                  checked={storeData.payment_methods.includes(method.id)}
                   onCheckedChange={(checked) =>
                     handlePaymentMethodChange(method.id, checked as boolean)
                   }
@@ -121,7 +114,7 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
               <div key={method.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={`delivery-${method.id}`}
-                  checked={storeData.deliveryMethods.includes(method.id)}
+                  checked={storeData.delivery_methods.includes(method.id)}
                   onCheckedChange={(checked) =>
                     handleDeliveryMethodChange(method.id, checked as boolean)
                   }
