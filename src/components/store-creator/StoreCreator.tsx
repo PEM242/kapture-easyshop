@@ -19,12 +19,12 @@ export type StoreData = {
   address: string;
   city: string;
   contact: string;
-  shippingPolicy: string;
-  refundPolicy: string;
+  shipping_policy: string; // Updated to match DB column name
+  refund_policy: string; // Updated to match DB column name
   country: string;
   theme: string;
-  paymentMethods: string[];
-  deliveryMethods: string[];
+  payment_methods: string[]; // Updated to match DB column name
+  delivery_methods: string[]; // Updated to match DB column name
   products: Product[];
 };
 
@@ -70,7 +70,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
     if (validateCurrentStep()) {
       if (currentStep === 4) {
         try {
-          // Get the current user
           const { data: { user }, error: userError } = await supabase.auth.getUser();
           
           if (userError) {
@@ -96,15 +95,22 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           console.log("Tentative de création de la boutique pour l'utilisateur:", user.id);
           console.log("Données de la boutique:", storeData);
 
-          // Insert the store data
+          // Prepare store data with correct column names
+          const storeDataForDB = {
+            ...storeData,
+            owner_id: user.id,
+            shipping_policy: storeData.shipping_policy,
+            refund_policy: storeData.refund_policy,
+            payment_methods: storeData.payment_methods,
+            delivery_methods: storeData.delivery_methods,
+          };
+
+          // Remove products array as it's not a column in the stores table
+          delete (storeDataForDB as any).products;
+
           const { data: store, error: storeError } = await supabase
             .from('stores')
-            .insert([
-              {
-                ...storeData,
-                owner_id: user.id,
-              }
-            ])
+            .insert([storeDataForDB])
             .select()
             .single();
 
@@ -120,7 +126,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
           console.log("Boutique créée avec succès:", store);
 
-          // Save store data to localStorage
           localStorage.setItem('storeData', JSON.stringify(storeData));
           setIsStoreCreated(true);
           toast({
