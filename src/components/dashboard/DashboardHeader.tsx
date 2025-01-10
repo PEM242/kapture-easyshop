@@ -18,8 +18,7 @@ const DashboardHeader = ({ storeData }: DashboardHeaderProps) => {
   const navigate = useNavigate();
 
   const handleViewAsCustomer = () => {
-    const storeUrl = `/store/${storeData.name.toLowerCase().replace(/\s+/g, '-')}`;
-    navigate(storeUrl);
+    navigate('/store');
   };
 
   return (
