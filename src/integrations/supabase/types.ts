@@ -9,21 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      produits: {
-        Row: {
-          created_at: string
-          id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-        }
-        Relationships: []
-      }
       "Profils commercant": {
         Row: {
           created_at: string
@@ -41,16 +26,16 @@ export type Database = {
       }
       stores: {
         Row: {
-          created_at: string
-          id: number
+          logo: string
+          name: string
         }
         Insert: {
-          created_at?: string
-          id?: number
+          logo: string
+          name: string
         }
         Update: {
-          created_at?: string
-          id?: number
+          logo?: string
+          name?: string
         }
         Relationships: []
       }
