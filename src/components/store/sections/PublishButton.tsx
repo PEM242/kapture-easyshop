@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
 interface PublishButtonProps {
-  storeName: string;
   isPublished: boolean;
   onPublish: () => void;
+  storeName: string;
 }
 
-const PublishButton = ({ storeName, isPublished, onPublish }: PublishButtonProps) => {
+const PublishButton = ({ isPublished, onPublish, storeName }: PublishButtonProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -17,55 +17,22 @@ const PublishButton = ({ storeName, isPublished, onPublish }: PublishButtonProps
     const storeUrl = `${window.location.origin}/store/${storeName.toLowerCase().replace(/\s+/g, '-')}`;
     
     toast({
-      title: "Félicitations ! 🎉",
-      description: (
-        <div className="space-y-2">
-          <p>Votre boutique est maintenant en ligne !</p>
-          <div className="flex items-center space-x-2 p-2 bg-secondary rounded">
-            <span className="flex-1 text-sm">{storeUrl}</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                navigator.clipboard.writeText(storeUrl);
-                toast({
-                  title: "Lien copié !",
-                  description: "Le lien de votre boutique a été copié dans le presse-papier.",
-                });
-              }}
-            >
-              Copier
-            </Button>
-          </div>
-        </div>
-      ),
+      title: "Boutique publiée !",
+      description: "Votre boutique est maintenant en ligne. Copiez le lien pour la partager !",
     });
-  };
 
-  const goToDashboard = () => {
+    // Navigate to dashboard after publishing
     navigate("/dashboard");
   };
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 space-y-4">
-      {!isPublished ? (
-        <Button
-          size="lg"
-          className="shadow-lg"
-          onClick={handlePublish}
-        >
-          Publier la boutique
-        </Button>
-      ) : (
-        <Button
-          size="lg"
-          className="shadow-lg"
-          onClick={goToDashboard}
-        >
-          Aller au tableau de bord
-        </Button>
-      )}
-    </div>
+    <Button
+      onClick={handlePublish}
+      className="w-full md:w-auto"
+      disabled={isPublished}
+    >
+      {isPublished ? "Déjà publié" : "Publier la boutique"}
+    </Button>
   );
 };
 
