@@ -26,29 +26,31 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
   ];
 
   const handlePaymentMethodChange = (methodId: string, checked: boolean) => {
+    const currentMethods = storeData.payment_methods || [];
     if (checked) {
       setStoreData({
         ...storeData,
-        payment_methods: [...storeData.payment_methods, methodId],
+        payment_methods: [...currentMethods, methodId],
       });
     } else {
       setStoreData({
         ...storeData,
-        payment_methods: storeData.payment_methods.filter((id) => id !== methodId),
+        payment_methods: currentMethods.filter((id) => id !== methodId),
       });
     }
   };
 
   const handleDeliveryMethodChange = (methodId: string, checked: boolean) => {
+    const currentMethods = storeData.delivery_methods || [];
     if (checked) {
       setStoreData({
         ...storeData,
-        delivery_methods: [...storeData.delivery_methods, methodId],
+        delivery_methods: [...currentMethods, methodId],
       });
     } else {
       setStoreData({
         ...storeData,
-        delivery_methods: storeData.delivery_methods.filter((id) => id !== methodId),
+        delivery_methods: currentMethods.filter((id) => id !== methodId),
       });
     }
   };
@@ -91,7 +93,7 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
               <div key={method.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={`payment-${method.id}`}
-                  checked={storeData.payment_methods.includes(method.id)}
+                  checked={(storeData.payment_methods || []).includes(method.id)}
                   onCheckedChange={(checked) =>
                     handlePaymentMethodChange(method.id, checked as boolean)
                   }
@@ -114,7 +116,7 @@ const StoreTheme = ({ storeData, setStoreData }: StoreThemeProps) => {
               <div key={method.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={`delivery-${method.id}`}
-                  checked={storeData.delivery_methods.includes(method.id)}
+                  checked={(storeData.delivery_methods || []).includes(method.id)}
                   onCheckedChange={(checked) =>
                     handleDeliveryMethodChange(method.id, checked as boolean)
                   }
