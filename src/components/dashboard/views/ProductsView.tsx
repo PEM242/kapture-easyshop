@@ -1,8 +1,9 @@
 import { StoreData } from "../../store-creator/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Share2 } from "lucide-react";
+import { Plus, Share2, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ProductForm from "../../store-creator/ProductForm";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductsViewProps {
   storeData: StoreData;
@@ -11,6 +12,7 @@ interface ProductsViewProps {
 
 const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const { toast } = useToast();
 
   const handleAddProduct = (product: any) => {
     const updatedStore = {
@@ -19,6 +21,59 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
     };
     onUpdateStore(updatedStore);
     setShowAddProduct(false);
+  };
+
+  const handleDeleteProduct = (index: number) => {
+    const updatedProducts = storeData.products.filter((_, i) => i !== index);
+    const updatedStore = {
+      ...storeData,
+      products: updatedProducts,
+    };
+    onUpdateStore(updatedStore);
+    toast({
+      title: "Produit supprimé",
+      description: "Le produit a été supprimé avec succès.",
+    });
+  };
+
+  const handleShare = async (product: any) => {
+    const storeUrl = `${window.location.origin}/store`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: `Découvrez ${product.name} dans notre boutique`,
+          url: storeUrl,
+        });
+        toast({
+          title: "Partage réussi !",
+          description: "Le produit a été partagé avec succès.",
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          toast({
+            title: "Erreur",
+            description: "Impossible de partager le produit. Veuillez réessayer.",
+            variant: "destructive",
+          });
+        }
+      }
+    } else {
+      // Fallback to copying the URL
+      try {
+        await navigator.clipboard.writeText(storeUrl);
+        toast({
+          title: "Lien copié !",
+          description: "Le lien du produit a été copié dans le presse-papier.",
+        });
+      } catch (err) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de copier le lien. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   if (showAddProduct) {
@@ -41,7 +96,7 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
       {storeData.products?.map((product, index) => (
         <div
           key={index}
-          className="flex items-center justify-between p-4 bg-card rounded-lg border border-border"
+          className="flex items-center justify-between p-4 bg-card rounded-lg border border-border hover:bg-accent/10 transition-colors"
         >
           <div className="flex items-center space-x-4">
             {product.images?.main && (
@@ -53,14 +108,35 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
             )}
             <div>
               <h3 className="font-medium">{product.name}</h3>
-              <p className="text-sm text-muted-foreground">
-                {product.price} € | Stock: {product.inStock ? "Disponible" : "Rupture"}
-              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{product.price} €</span>
+                <span>•</span>
+                <span className={product.inStock ? "text-green-500" : "text-red-500"}>
+                  {product.inStock ? "En stock" : "Rupture de stock"}
+                </span>
+                <span>•</span>
+                <span className={product.isActive ? "text-green-500" : "text-yellow-500"}>
+                  {product.isActive ? "Actif" : "Inactif"}
+                </span>
+              </div>
             </div>
           </div>
-          <Button variant="ghost" size="icon">
-            <Share2 className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => handleShare(product)}>
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => handleDeleteProduct(index)}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       ))}
       
