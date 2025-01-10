@@ -1,5 +1,5 @@
 import { Store, UtensilsCrossed, Palette } from "lucide-react";
-import { StoreData } from "./StoreCreator";
+import { StoreData } from "./types";
 
 interface StoreTypeProps {
   storeData: StoreData;
