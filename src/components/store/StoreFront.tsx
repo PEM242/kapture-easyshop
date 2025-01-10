@@ -12,7 +12,7 @@ import PublishButton from "./sections/PublishButton";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 interface StoreFrontProps {
@@ -26,7 +26,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const location = useLocation();
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
@@ -71,7 +70,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     localStorage.setItem('isStorePublished', 'true');
     toast({
       title: "Boutique publiée !",
-      description: "Votre boutique est maintenant visible par tous.",
+      description: "Votre boutique est maintenant visible par tous. Vous pouvez copier le lien pour la partager.",
     });
   };
 
@@ -85,7 +84,8 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
 
   return (
     <CartProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col relative">
+        {/* Navigation Buttons - Always visible at the top */}
         <div className="fixed top-4 left-4 z-50 flex gap-2">
           <Button
             variant="outline"
@@ -94,17 +94,19 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
             className="bg-white shadow-md hover:bg-gray-100"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au tableau de bord
+            Tableau de bord
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleShare}
-            className="bg-white shadow-md hover:bg-gray-100"
-          >
-            <Share2 className="h-4 w-4 mr-2" />
-            Partager
-          </Button>
+          {isPublished && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="bg-white shadow-md hover:bg-gray-100"
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Partager
+            </Button>
+          )}
         </div>
 
         <StoreHeader 
@@ -142,13 +144,16 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('footer')} 
         />
 
+        {/* Publish Button - Only visible when not published */}
         {!isPublished && (
           <div className="fixed bottom-4 right-4 z-50">
-            <PublishButton 
-              isPublished={isPublished}
-              onPublish={handlePublish}
-              storeName={storeData.name}
-            />
+            <Button
+              onClick={handlePublish}
+              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+              size="lg"
+            >
+              Publier la boutique
+            </Button>
           </div>
         )}
 
