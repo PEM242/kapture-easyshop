@@ -1,84 +1,142 @@
 import { StoreData } from "../../store-creator/types";
 import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Send } from "lucide-react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface OrdersViewProps {
   storeData: StoreData;
 }
 
+interface Order {
+  id: string;
+  customer: string;
+  total: number;
+  date: string;
+  status: "non traité" | "traité";
+  phone: string;
+  address: string;
+  payment: string;
+  delivery: string;
+}
+
 const OrdersView = ({ storeData }: OrdersViewProps) => {
-  // Données factices pour les commandes
-  const orders = [
+  const { toast } = useToast();
+  const [orders, setOrders] = useState<Order[]>([
     {
       id: "1",
-      customer: "Jean Dupont",
-      phone: "+33 6 12 34 56 78",
-      address: "123 Rue de Paris, 75001 Paris",
+      customer: "Jean Mbemba",
+      phone: "+221 77 123 45 67",
+      address: "123 Rue de Dakar, Sénégal",
       payment: "Paiement à la livraison",
       delivery: "Livraison à domicile",
-      total: 89.99,
-      date: "2024-02-20",
-      status: "nouveau",
+      total: 12000,
+      date: "2024-02-20 14:30",
+      status: "non traité",
     },
-  ];
+  ]);
+
+  const handleProcessOrder = (orderId: string) => {
+    setOrders(orders.map(order => 
+      order.id === orderId 
+        ? { ...order, status: "traité" as const }
+        : order
+    ));
+    
+    toast({
+      title: "Commande traitée",
+      description: "La commande a été marquée comme traitée",
+    });
+  };
+
+  const handleSendToDelivery = (orderId: string) => {
+    // Here you would typically integrate with a delivery service
+    toast({
+      title: "Commande transmise",
+      description: "La commande a été transmise au livreur",
+    });
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "nouveau":
-        return "bg-blue-500";
-      case "en cours":
+      case "non traité":
         return "bg-yellow-500";
-      case "livré":
+      case "traité":
         return "bg-green-500";
       default:
         return "bg-gray-500";
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+
   return (
-    <div className="py-6 space-y-4">
-      {orders.map((order) => (
-        <Card key={order.id}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Commande #{order.id}</CardTitle>
-                <CardDescription>{order.date}</CardDescription>
-              </div>
-              <Badge className={getStatusColor(order.status)}>
-                {order.status}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="font-medium">Client</h4>
-              <p className="text-sm text-muted-foreground">{order.customer}</p>
-              <p className="text-sm text-muted-foreground">{order.phone}</p>
-              <p className="text-sm text-muted-foreground">{order.address}</p>
-            </div>
-            <div>
-              <h4 className="font-medium">Détails</h4>
-              <p className="text-sm text-muted-foreground">
-                {order.payment} | {order.delivery}
-              </p>
-              <p className="text-sm font-medium">Total: {order.total} €</p>
-            </div>
-            <Button className="w-full">
-              <CheckCircle className="mr-2 h-4 w-4" />
-              Confirmer et transmettre au livreur
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="py-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Client</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {orders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>{order.customer}</TableCell>
+              <TableCell>{order.total.toLocaleString()} CFA</TableCell>
+              <TableCell>{formatDate(order.date)}</TableCell>
+              <TableCell>
+                <Badge className={getStatusColor(order.status)}>
+                  {order.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  {order.status === "non traité" && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleProcessOrder(order.id)}
+                    >
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Traiter la commande
+                    </Button>
+                  )}
+                  {order.status === "traité" && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleSendToDelivery(order.id)}
+                    >
+                      <Send className="mr-2 h-4 w-4" />
+                      Transmettre au livreur
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
