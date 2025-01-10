@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +13,10 @@ import type { Product, ProductFormState } from "./types";
 interface ProductFormProps {
   onAddProduct: (product: Product) => void;
   storeType: string;
+  initialData?: Product;
 }
 
-const ProductForm = ({ onAddProduct, storeType }: ProductFormProps) => {
+const ProductForm = ({ onAddProduct, storeType, initialData }: ProductFormProps) => {
   const [newProduct, setNewProduct] = useState<ProductFormState>({
     name: "",
     price: 0,
@@ -36,6 +37,16 @@ const ProductForm = ({ onAddProduct, storeType }: ProductFormProps) => {
     isFeatured: false,
     collectionName: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setNewProduct({
+        ...initialData,
+        isFeatured: !!initialData.featured,
+        collectionName: initialData.featured?.collectionName || "",
+      });
+    }
+  }, [initialData]);
 
   const { toast } = useToast();
 
@@ -73,26 +84,28 @@ const ProductForm = ({ onAddProduct, storeType }: ProductFormProps) => {
     };
 
     onAddProduct(productToAdd);
-    setNewProduct({
-      name: "",
-      price: 0,
-      description: "",
-      images: {
-        main: "",
-        gallery: [],
-      },
-      category: "",
-      customization: {},
-      discount: {
-        type: null,
-        value: 0,
-        finalPrice: 0,
-      },
-      isActive: true,
-      inStock: true,
-      isFeatured: false,
-      collectionName: "",
-    });
+    if (!initialData) {
+      setNewProduct({
+        name: "",
+        price: 0,
+        description: "",
+        images: {
+          main: "",
+          gallery: [],
+        },
+        category: "",
+        customization: {},
+        discount: {
+          type: null,
+          value: 0,
+          finalPrice: 0,
+        },
+        isActive: true,
+        inStock: true,
+        isFeatured: false,
+        collectionName: "",
+      });
+    }
   };
 
   return (
@@ -290,6 +303,3 @@ const ProductForm = ({ onAddProduct, storeType }: ProductFormProps) => {
       </div>
     </div>
   );
-};
-
-export default ProductForm;
