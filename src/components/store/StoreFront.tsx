@@ -47,15 +47,15 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Bouton fixe pour aller au tableau de bord */}
-        <div className="fixed top-4 right-4 z-50">
+        {/* Bouton fixe pour aller au tableau de bord avec style amélioré */}
+        <div className="fixed top-4 right-4 z-[9999]">
           <Button
-            variant="outline"
+            size="lg"
             onClick={() => navigate('/dashboard')}
-            className="bg-white shadow-md hover:bg-gray-100"
+            className="bg-primary text-white shadow-lg hover:bg-primary/90 font-semibold px-6"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Aller au tableau de bord
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Tableau de bord
           </Button>
         </div>
 
