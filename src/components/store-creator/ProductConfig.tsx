@@ -96,11 +96,15 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
         ...newProduct.discount,
         finalPrice: calculateFinalPrice(newProduct.price, newProduct.discount),
       },
+      images: {
+        main: newProduct.images.main || "",
+        gallery: newProduct.images.gallery || [],
+      },
     };
 
     setStoreData({
       ...storeData,
-      products: [...storeData.products, productToAdd],
+      products: [...(storeData.products || []), productToAdd],
     });
 
     setNewProduct({
@@ -359,7 +363,7 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
           </Button>
         </div>
 
-        {storeData.products.length > 0 && (
+        {storeData.products && storeData.products.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-lg font-medium">
               {storeData.type === "restaurant" ? "Plats ajoutés" : "Produits ajoutés"}
@@ -369,15 +373,21 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
                 <Card key={index}>
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center space-x-4">
-                      <img
-                        src={product.images.main}
-                        alt={product.name}
-                        className="w-16 h-16 object-cover rounded"
-                      />
+                      {product.images?.main ? (
+                        <img
+                          src={product.images.main}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                          <span className="text-sm text-gray-400">No image</span>
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium">{product.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {product.discount.finalPrice > 0
+                          {product.discount?.finalPrice > 0
                             ? `${product.discount.finalPrice} €`
                             : `${product.price} €`}
                         </p>
