@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import StoreFront from "./components/store/StoreFront";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -31,7 +31,10 @@ const App = () => {
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
-    if (savedStoreData) {
+    const currentPath = window.location.pathname;
+    
+    // Ne charge les données que si on n'est pas sur la page de création
+    if (savedStoreData && currentPath !== "/") {
       setStoreData(JSON.parse(savedStoreData));
     }
   }, []);
