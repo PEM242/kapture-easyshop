@@ -14,7 +14,6 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
       </header>
       <main className="store-content">
         <h2 className="store-sector">{storeData.sector}</h2>
-        <p className="store-description">{storeData.description}</p>
         <div className="store-products">
           {storeData.products.map((product) => (
             <div key={product.name} className="product-card">
