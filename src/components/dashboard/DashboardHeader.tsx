@@ -18,7 +18,7 @@ const DashboardHeader = ({ storeData }: DashboardHeaderProps) => {
   const navigate = useNavigate();
 
   const handleViewAsCustomer = () => {
-    navigate('/store');
+    navigate('/store', { state: { fromDashboard: true } });
   };
 
   return (

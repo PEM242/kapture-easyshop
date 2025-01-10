@@ -12,8 +12,8 @@ import PublishButton from "./sections/PublishButton";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -26,6 +26,10 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
+  
+  // Check if the user came from the dashboard (merchant view)
+  const isMerchantView = location.state?.fromDashboard || false;
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
@@ -72,26 +76,28 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col">
-        <div className="fixed top-4 right-4 z-50 flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/dashboard')}
-            className="bg-white shadow-md"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au tableau de bord
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleShare}
-            className="bg-white shadow-md"
-          >
-            <Share2 className="h-4 w-4 mr-2" />
-            Partager
-          </Button>
-        </div>
+        {isMerchantView && (
+          <div className="fixed top-4 left-4 z-50 flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="bg-white shadow-md"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour au tableau de bord
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="bg-white shadow-md"
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Partager
+            </Button>
+          </div>
+        )}
 
         <StoreHeader 
           storeData={storeData} 
@@ -128,11 +134,13 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('footer')} 
         />
 
-        <PublishButton 
-          isPublished={isPublished}
-          onPublish={() => setIsPublished(true)}
-          storeName={storeData.name}
-        />
+        {!isPublished && isMerchantView && (
+          <PublishButton 
+            isPublished={isPublished}
+            onPublish={() => setIsPublished(true)}
+            storeName={storeData.name}
+          />
+        )}
 
         <CartModal
           open={isCartOpen}
