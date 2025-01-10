@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { StoreData } from "@/components/store-creator/types";
+import { useToast } from "@/hooks/use-toast";
 
 interface CheckoutFormProps {
   storeData: StoreData;
@@ -13,7 +12,7 @@ interface CheckoutFormProps {
 const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
   const { items, total, clearCart } = useCart();
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = React.useState({
     name: "",
     phone: "",
     address: "",
@@ -64,102 +63,123 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
     return "Paiement à la livraison";
   };
 
+  // Filter unique payment methods based on delivery method
+  const getFilteredPaymentMethods = () => {
+    const uniqueMethods = new Set();
+    return storeData.paymentMethods.filter(method => {
+      const label = getPaymentMethodLabel(method);
+      if (!uniqueMethods.has(label)) {
+        uniqueMethods.add(label);
+        return true;
+      }
+      return false;
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Nom complet *</label>
-          <Input
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Votre nom"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Nom complet *
+        </label>
+        <Input
+          required
+          value={formData.name}
+          onChange={(e) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
+          placeholder="Votre nom"
+        />
+      </div>
 
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Numéro de téléphone *
+        </label>
+        <Input
+          required
+          value={formData.phone}
+          onChange={(e) =>
+            setFormData({ ...formData, phone: e.target.value })
+          }
+          placeholder="Votre numéro"
+          type="tel"
+        />
+      </div>
+
+      {storeData.deliveryMethods.length > 1 && (
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Mode de livraison
+          </label>
+          <div className="space-y-2">
+            {storeData.deliveryMethods.map((method) => (
+              <label key={method} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="deliveryMethod"
+                  value={method}
+                  checked={formData.deliveryMethod === method}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      deliveryMethod: e.target.value,
+                      paymentMethod: storeData.paymentMethods[0],
+                    })
+                  }
+                  className="rounded-full"
+                />
+                <span>
+                  {method === "delivery"
+                    ? "Livraison à domicile"
+                    : "Retrait en magasin"}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {formData.deliveryMethod === "delivery" && (
         <div>
           <label className="block text-sm font-medium mb-1">
-            Numéro de téléphone *
+            Adresse de livraison *
           </label>
           <Input
             required
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            placeholder="Votre numéro"
-            type="tel"
+            value={formData.address}
+            onChange={(e) =>
+              setFormData({ ...formData, address: e.target.value })
+            }
+            placeholder="Votre adresse complète"
           />
         </div>
+      )}
 
-        {storeData.deliveryMethods.length > 1 && (
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Mode de livraison
-            </label>
-            <div className="space-y-2">
-              {storeData.deliveryMethods.map((method) => (
-                <label key={method} className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="deliveryMethod"
-                    value={method}
-                    checked={formData.deliveryMethod === method}
-                    onChange={(e) =>
-                      setFormData({ ...formData, deliveryMethod: e.target.value })
-                    }
-                    className="rounded-full"
-                  />
-                  <span>
-                    {method === "delivery"
-                      ? "Livraison à domicile"
-                      : "Retrait en magasin"}
-                  </span>
-                </label>
-              ))}
-            </div>
+      {storeData.paymentMethods.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Méthode de paiement
+          </label>
+          <div className="space-y-2">
+            {getFilteredPaymentMethods().map((method) => (
+              <label key={method} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={method}
+                  checked={formData.paymentMethod === method}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentMethod: e.target.value })
+                  }
+                  className="rounded-full"
+                />
+                <span>{getPaymentMethodLabel(method)}</span>
+              </label>
+            ))}
           </div>
-        )}
-
-        {formData.deliveryMethod === "delivery" && (
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Adresse de livraison *
-            </label>
-            <Input
-              required
-              value={formData.address}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-              placeholder="Votre adresse complète"
-            />
-          </div>
-        )}
-
-        {storeData.paymentMethods.length > 1 && (
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Méthode de paiement
-            </label>
-            <div className="space-y-2">
-              {storeData.paymentMethods.map((method) => (
-                <label key={method} className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value={method}
-                    checked={formData.paymentMethod === method}
-                    onChange={(e) =>
-                      setFormData({ ...formData, paymentMethod: e.target.value })
-                    }
-                    className="rounded-full"
-                  />
-                  <span>{getPaymentMethodLabel(method)}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="border-t pt-4">
         <p className="font-semibold mb-4">
