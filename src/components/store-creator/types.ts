@@ -60,6 +60,7 @@ export type StoreData = {
   cover: string;
   sector: string;
   address: string;
+  city: string; // Ajout de la propriété city
   contact: string;
   shippingPolicy: string;
   refundPolicy: string;

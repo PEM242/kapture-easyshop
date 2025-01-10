@@ -19,6 +19,7 @@ const App = () => {
     cover: "",
     sector: "",
     address: "",
+    city: "", // Ajout de la propriété city
     contact: "",
     shippingPolicy: "",
     refundPolicy: "",
