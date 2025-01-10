@@ -37,8 +37,8 @@ const HomeView = ({ storeData }: HomeViewProps) => {
               <DollarSign className="w-6 h-6 text-[#4CAF50]" />
             </div>
             <div>
-              <p className="text-4xl font-semibold">2,500€</p>
-              <p className="text-gray-600">Revenus totaux</p>
+              <p className="text-4xl font-semibold">45</p>
+              <p className="text-gray-600">Commandes totales</p>
             </div>
           </CardContent>
         </Card>
@@ -49,8 +49,8 @@ const HomeView = ({ storeData }: HomeViewProps) => {
               <ShoppingBag className="w-6 h-6 text-[#4CAF50]" />
             </div>
             <div>
-              <p className="text-4xl font-semibold">45</p>
-              <p className="text-gray-600">Commandes totales</p>
+              <p className="text-4xl font-semibold">12</p>
+              <p className="text-gray-600">Commandes en cours</p>
             </div>
           </CardContent>
         </Card>
@@ -62,7 +62,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
             </div>
             <div>
               <p className="text-4xl font-semibold">156</p>
-              <p className="text-gray-600">Vues totales</p>
+              <p className="text-gray-600">Vues totales de la boutique</p>
             </div>
           </CardContent>
         </Card>
