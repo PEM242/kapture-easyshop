@@ -10,7 +10,7 @@ import StoreCover from "./sections/StoreCover";
 import FeaturedProducts from "./sections/FeaturedProducts";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,21 +21,13 @@ interface StoreFrontProps {
 const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isPublished, setIsPublished] = useState(false);
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Mettre à jour les données du magasin si elles changent
     setStoreData(initialStoreData);
     
-    // Vérifier si la boutique est publiée
-    const publishStatus = localStorage.getItem('isStorePublished');
-    if (publishStatus === 'true') {
-      setIsPublished(true);
-    }
-
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
@@ -43,31 +35,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       document.removeEventListener('openCart', handleOpenCart);
     };
   }, [initialStoreData]);
-
-  const handlePublish = () => {
-    setIsPublished(true);
-    localStorage.setItem('isStorePublished', 'true');
-    toast({
-      title: "Boutique publiée !",
-      description: "Votre boutique est maintenant en ligne. Vous pouvez la partager !",
-    });
-  };
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: "Lien copié !",
-        description: "Le lien de votre boutique a été copié dans le presse-papier.",
-      });
-    } catch (err) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de copier le lien.",
-        variant: "destructive",
-      });
-    }
-  };
 
   if (!storeData.type || !storeData.name) {
     return (
@@ -80,39 +47,17 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Afficher les boutons uniquement si la boutique n'est pas publiée */}
-        {!isPublished && (
-          <div className="fixed top-4 left-4 z-50 flex gap-4">
-            <Button
-              onClick={handlePublish}
-              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
-            >
-              Publier ma boutique
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/dashboard')}
-              className="bg-white shadow-md hover:bg-gray-100"
-            >
-              Aller au tableau de bord
-            </Button>
-          </div>
-        )}
-
-        {/* Afficher le bouton de partage une fois publié */}
-        {isPublished && (
-          <div className="fixed top-4 right-4 z-50">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="bg-white shadow-md hover:bg-gray-100"
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              Partager
-            </Button>
-          </div>
-        )}
+        {/* Bouton fixe pour aller au tableau de bord */}
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/dashboard')}
+            className="bg-white shadow-md hover:bg-gray-100"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Aller au tableau de bord
+          </Button>
+        </div>
 
         <StoreHeader 
           storeData={storeData} 
