@@ -1,4 +1,4 @@
-import { StoreData } from "../store-creator/StoreCreator";
+import { StoreData } from "../store-creator/types";
 
 interface StoreFooterProps {
   storeData: StoreData;

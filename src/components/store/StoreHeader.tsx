@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { StoreData } from "../store-creator/StoreCreator";
+import { StoreData } from "../store-creator/types";
 import { useCart } from "@/contexts/CartContext";
 
 interface StoreHeaderProps {

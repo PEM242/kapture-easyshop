@@ -1,5 +1,5 @@
 import StoreCreator from "@/components/store-creator/StoreCreator";
-import { StoreData } from "@/components/store-creator/StoreCreator";
+import { StoreData } from "@/components/store-creator/types";
 
 interface IndexProps {
   storeData: StoreData;
