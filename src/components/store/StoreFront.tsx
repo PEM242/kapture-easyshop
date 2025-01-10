@@ -50,7 +50,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     return themeStyles[storeData.theme as keyof typeof themeStyles]?.[element] || '';
   };
 
-  const featuredProducts = storeData.products.filter(product => product.featured);
+  const featuredProducts = storeData.products.filter(product => product.featured && product.isActive);
 
   if (!storeData.type || !storeData.name) {
     return (
@@ -70,7 +70,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
 
       <main className="flex-grow bg-white">
         {storeData.cover && (
-          <div className="relative h-32 md:h-48 w-full overflow-hidden">
+          <div className="relative h-24 md:h-48 w-full overflow-hidden">
             <img
               src={storeData.cover}
               alt="Couverture"
@@ -101,9 +101,9 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
                     className="flex-shrink-0"
                   >
                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-gray-200 relative">
-                      {product.image ? (
+                      {product.images.main ? (
                         <img
-                          src={product.image}
+                          src={product.images.main}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />

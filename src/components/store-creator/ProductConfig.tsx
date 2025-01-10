@@ -4,12 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import ImageUpload from "@/components/ui/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import type { StoreData, Product } from "./StoreCreator";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ProductImages from "./ProductImages";
+import ProductVariants from "./ProductVariants";
 
 interface ProductConfigProps {
   storeData: StoreData;
@@ -20,12 +21,27 @@ interface ProductFormState {
   name: string;
   price: number;
   description: string;
-  image: string;
+  images: {
+    main: string;
+    gallery: string[];
+  };
   category: string;
+  customization: {
+    sizes?: string[];
+    colors?: string[];
+    shoesSizes?: string[];
+    customSizes?: string;
+    customColors?: string;
+  };
+  discount: {
+    type: 'percentage' | 'fixed' | null;
+    value: number;
+    finalPrice: number;
+  };
+  isActive: boolean;
+  inStock: boolean;
   isFeatured: boolean;
   collectionName: string;
-  customization: string[];
-  discount: number;
 }
 
 const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
@@ -33,19 +49,36 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
     name: "",
     price: 0,
     description: "",
-    image: "",
+    images: {
+      main: "",
+      gallery: [],
+    },
     category: "",
+    customization: {},
+    discount: {
+      type: null,
+      value: 0,
+      finalPrice: 0,
+    },
+    isActive: true,
+    inStock: true,
     isFeatured: false,
     collectionName: "",
-    customization: [],
-    discount: 0,
   });
 
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const calculateFinalPrice = (price: number, discount: ProductFormState["discount"]) => {
+    if (!discount.type || !discount.value) return price;
+    if (discount.type === "percentage") {
+      return price * (1 - discount.value / 100);
+    }
+    return Math.max(0, price - discount.value);
+  };
+
   const handleAddProduct = () => {
-    if (!newProduct.name || !newProduct.price || !newProduct.description) {
+    if (!newProduct.name || !newProduct.price || !newProduct.description || !newProduct.images.main) {
       toast({
         title: "Informations manquantes",
         description: "Veuillez remplir tous les champs obligatoires",
@@ -58,7 +91,11 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       ...newProduct,
       featured: newProduct.isFeatured ? {
         collectionName: newProduct.collectionName
-      } : undefined
+      } : undefined,
+      discount: {
+        ...newProduct.discount,
+        finalPrice: calculateFinalPrice(newProduct.price, newProduct.discount),
+      },
     };
 
     setStoreData({
@@ -70,12 +107,21 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       name: "",
       price: 0,
       description: "",
-      image: "",
+      images: {
+        main: "",
+        gallery: [],
+      },
       category: "",
+      customization: {},
+      discount: {
+        type: null,
+        value: 0,
+        finalPrice: 0,
+      },
+      isActive: true,
+      inStock: true,
       isFeatured: false,
       collectionName: "",
-      customization: [],
-      discount: 0,
     });
   };
 
@@ -148,6 +194,13 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
                 setNewProduct({
                   ...newProduct,
                   price: parseFloat(e.target.value),
+                  discount: {
+                    ...newProduct.discount,
+                    finalPrice: calculateFinalPrice(
+                      parseFloat(e.target.value),
+                      newProduct.discount
+                    ),
+                  },
                 })
               }
               placeholder="Prix"
@@ -166,13 +219,110 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
             />
           </div>
 
+          <ProductImages
+            mainImage={newProduct.images.main}
+            galleryImages={newProduct.images.gallery}
+            onMainImageChange={(url) =>
+              setNewProduct({
+                ...newProduct,
+                images: { ...newProduct.images, main: url },
+              })
+            }
+            onGalleryImageChange={(urls) =>
+              setNewProduct({
+                ...newProduct,
+                images: { ...newProduct.images, gallery: urls },
+              })
+            }
+          />
+
+          <ProductVariants
+            customization={newProduct.customization}
+            onChange={(customization) =>
+              setNewProduct({ ...newProduct, customization })
+            }
+          />
+
           <div>
-            <Label>Image</Label>
-            <ImageUpload
-              value={newProduct.image}
-              onChange={(url) => setNewProduct({ ...newProduct, image: url })}
-              label="Image du produit"
-            />
+            <Label>Réduction</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <select
+                  className="w-full p-2 border rounded"
+                  value={newProduct.discount.type || ""}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      discount: {
+                        ...newProduct.discount,
+                        type: e.target.value as "percentage" | "fixed" | null,
+                        finalPrice: calculateFinalPrice(newProduct.price, {
+                          ...newProduct.discount,
+                          type: e.target.value as "percentage" | "fixed" | null,
+                        }),
+                      },
+                    })
+                  }
+                >
+                  <option value="">Pas de réduction</option>
+                  <option value="percentage">Pourcentage (%)</option>
+                  <option value="fixed">Montant fixe</option>
+                </select>
+              </div>
+              {newProduct.discount.type && (
+                <Input
+                  type="number"
+                  value={newProduct.discount.value}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      discount: {
+                        ...newProduct.discount,
+                        value: parseFloat(e.target.value),
+                        finalPrice: calculateFinalPrice(newProduct.price, {
+                          ...newProduct.discount,
+                          value: parseFloat(e.target.value),
+                        }),
+                      },
+                    })
+                  }
+                  placeholder={
+                    newProduct.discount.type === "percentage"
+                      ? "Pourcentage"
+                      : "Montant"
+                  }
+                />
+              )}
+            </div>
+            {newProduct.discount.type && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Prix final : {newProduct.discount.finalPrice.toFixed(2)} €
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isActive"
+                checked={newProduct.isActive}
+                onCheckedChange={(checked) =>
+                  setNewProduct({ ...newProduct, isActive: checked as boolean })
+                }
+              />
+              <Label htmlFor="isActive">Produit actif</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="inStock"
+                checked={newProduct.inStock}
+                onCheckedChange={(checked) =>
+                  setNewProduct({ ...newProduct, inStock: checked as boolean })
+                }
+              />
+              <Label htmlFor="inStock">En stock</Label>
+            </div>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -218,16 +368,30 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
               {storeData.products.map((product, index) => (
                 <Card key={index}>
                   <CardContent className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {product.price} €
-                      </p>
-                      {product.featured && (
-                        <p className="text-sm text-blue-500">
-                          Produit vedette - Collection: {product.featured.collectionName}
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={product.images.main}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {product.discount.finalPrice > 0
+                            ? `${product.discount.finalPrice} €`
+                            : `${product.price} €`}
                         </p>
-                      )}
+                        {product.featured && (
+                          <p className="text-sm text-blue-500">
+                            Produit vedette - Collection: {product.featured.collectionName}
+                          </p>
+                        )}
+                        {!product.inStock && (
+                          <p className="text-sm text-red-500">
+                            En rupture de stock
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <Button
                       variant="ghost"

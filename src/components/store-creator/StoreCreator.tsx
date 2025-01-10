@@ -30,10 +30,25 @@ export type Product = {
   name: string;
   price: number;
   description: string;
-  image: string;
+  images: {
+    main: string;
+    gallery: string[];
+  };
   category: string;
-  customization: string[];
-  discount: number;
+  customization: {
+    sizes?: string[];
+    colors?: string[];
+    shoesSizes?: string[];
+    customSizes?: string;
+    customColors?: string;
+  };
+  discount: {
+    type: 'percentage' | 'fixed' | null;
+    value: number;
+    finalPrice: number;
+  };
+  isActive: boolean;
+  inStock: boolean;
   featured?: {
     collectionName: string;
   };
