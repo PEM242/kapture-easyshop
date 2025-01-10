@@ -3,17 +3,20 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 interface PublishButtonProps {
-  storeUrl: string;
+  storeName: string;
   isPublished: boolean;
   onPublish: () => void;
 }
 
-const PublishButton = ({ storeUrl, isPublished, onPublish }: PublishButtonProps) => {
+const PublishButton = ({ storeName, isPublished, onPublish }: PublishButtonProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handlePublish = () => {
     onPublish();
+    // Generate a URL-friendly version of the store name
+    const storeUrl = `${window.location.origin}/store/${storeName.toLowerCase().replace(/\s+/g, '-')}`;
+    
     toast({
       title: "Félicitations ! 🎉",
       description: (
