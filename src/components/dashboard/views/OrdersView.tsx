@@ -6,6 +6,8 @@ import ProcessOrderDialog from "./orders/ProcessOrderDialog";
 import DeliveryDialog from "./orders/DeliveryDialog";
 import { useOrders } from "./orders/useOrders";
 import { Order } from "./orders/types";
+import OrderFilters from "./orders/OrderFilters";
+import { DateRange } from "react-day-picker";
 
 interface OrdersViewProps {
   storeData: StoreData;
@@ -18,6 +20,28 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
   const [isProcessDialogOpen, setIsProcessDialogOpen] = useState(false);
   const [isDeliveryDialogOpen, setIsDeliveryDialogOpen] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+
+  // Filtres
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateRange, setDateRange] = useState<DateRange>();
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch = 
+      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.id.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
+
+    const matchesDate =
+      !dateRange?.from ||
+      !dateRange?.to ||
+      (new Date(order.date) >= dateRange.from &&
+        new Date(order.date) <= dateRange.to);
+
+    return matchesSearch && matchesStatus && matchesDate;
+  });
 
   const handleProcessOrder = (orderId: string) => {
     const order = orders.find((o) => o.id === orderId);
@@ -64,8 +88,17 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
 
   return (
     <div className="py-6">
+      <OrderFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
+      />
+
       <OrderList
-        orders={orders}
+        orders={filteredOrders}
         onProcessOrder={handleProcessOrder}
         onSendToDelivery={handleSendToDelivery}
       />

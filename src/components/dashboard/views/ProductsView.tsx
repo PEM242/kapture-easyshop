@@ -4,6 +4,7 @@ import { Plus, Share2, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ProductForm from "../../store-creator/ProductForm";
 import { useToast } from "@/hooks/use-toast";
+import ProductFilters from "./products/ProductFilters";
 
 interface ProductsViewProps {
   storeData: StoreData;
@@ -14,6 +15,25 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<{ index: number; product: any } | null>(null);
   const { toast } = useToast();
+
+  // Filtres
+  const [searchTerm, setSearchTerm] = useState("");
+  const [stockFilter, setStockFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filteredProducts = storeData.products?.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStock =
+      stockFilter === "all" ||
+      (stockFilter === "inStock" && product.inStock) ||
+      (stockFilter === "outOfStock" && !product.inStock);
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && product.isActive) ||
+      (statusFilter === "inactive" && !product.isActive);
+
+    return matchesSearch && matchesStock && matchesStatus;
+  });
 
   const handleAddProduct = (product: any) => {
     const updatedStore = {
@@ -129,7 +149,16 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
 
   return (
     <div className="py-6 space-y-4">
-      {storeData.products?.map((product, index) => (
+      <ProductFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        stockFilter={stockFilter}
+        onStockFilterChange={setStockFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
+
+      {filteredProducts?.map((product, index) => (
         <div
           key={index}
           className="flex items-center justify-between p-4 bg-card rounded-lg border border-border hover:bg-accent/10 transition-colors"
