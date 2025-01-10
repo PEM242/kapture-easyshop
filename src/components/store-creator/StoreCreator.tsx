@@ -9,7 +9,7 @@ import ProgressBar from "./ProgressBar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Store } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { StoreData, Product } from "./types";
+import { StoreData } from "./types";
 
 interface StoreCreatorProps {
   storeData: StoreData;
