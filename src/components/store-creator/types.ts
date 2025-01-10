@@ -43,3 +43,30 @@ export type StoreData = {
   delivery_methods: string[];
   products: Product[];
 };
+
+export type ProductFormState = {
+  name: string;
+  price: number;
+  description: string;
+  images: {
+    main: string;
+    gallery: string[];
+  };
+  category: string;
+  customization: {
+    sizes?: string[];
+    colors?: string[];
+    shoesSizes?: string[];
+    customSizes?: string;
+    customColors?: string;
+  };
+  discount: {
+    type: 'percentage' | 'fixed' | null;
+    value: number;
+    finalPrice: number;
+  };
+  isActive: boolean;
+  inStock: boolean;
+  isFeatured: boolean;
+  collectionName: string;
+};

@@ -17,8 +17,8 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
     name: "",
     phone: "",
     address: "",
-    paymentMethod: storeData.paymentMethods[0],
-    deliveryMethod: storeData.deliveryMethods[0],
+    paymentMethod: storeData.payment_methods[0],
+    deliveryMethod: storeData.delivery_methods[0],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,14 +51,13 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
       delivery: formData.deliveryMethod === "delivery" ? "Livraison à domicile" : "Retrait en boutique",
       total,
       items: items.map(item => ({
-        productId: item.name, // Using name as productId since it's unique
+        productId: item.name,
         name: item.name,
         quantity: item.quantity,
         price: item.discount.finalPrice || item.price
       }))
     };
 
-    // Sauvegarder la commande dans localStorage
     localStorage.setItem('pendingOrder', JSON.stringify(order));
 
     toast({
@@ -77,10 +76,9 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
     return "Paiement à la livraison";
   };
 
-  // Filter unique payment methods based on delivery method
   const getFilteredPaymentMethods = () => {
     const uniqueMethods = new Set();
-    return storeData.paymentMethods.filter(method => {
+    return storeData.payment_methods.filter(method => {
       const label = getPaymentMethodLabel(method);
       if (!uniqueMethods.has(label)) {
         uniqueMethods.add(label);
@@ -121,13 +119,13 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
         />
       </div>
 
-      {storeData.deliveryMethods.length > 1 && (
+      {storeData.delivery_methods.length > 1 && (
         <div>
           <label className="block text-sm font-medium mb-2">
             Mode de livraison
           </label>
           <div className="space-y-2">
-            {storeData.deliveryMethods.map((method) => (
+            {storeData.delivery_methods.map((method) => (
               <label key={method} className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -138,7 +136,7 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
                     setFormData({
                       ...formData,
                       deliveryMethod: e.target.value,
-                      paymentMethod: storeData.paymentMethods[0],
+                      paymentMethod: storeData.payment_methods[0],
                     })
                   }
                   className="rounded-full"
@@ -170,7 +168,7 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
         </div>
       )}
 
-      {storeData.paymentMethods.length > 0 && (
+      {storeData.payment_methods.length > 0 && (
         <div>
           <label className="block text-sm font-medium mb-2">
             Méthode de paiement

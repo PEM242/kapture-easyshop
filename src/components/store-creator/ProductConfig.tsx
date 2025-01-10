@@ -49,12 +49,12 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       address: "",
       city: "",
       contact: "",
-      shippingPolicy: "",
-      refundPolicy: "",
+      shipping_policy: "",
+      refund_policy: "",
       country: "",
       theme: "",
-      paymentMethods: [],
-      deliveryMethods: [],
+      payment_methods: [],
+      delivery_methods: [],
       products: [],
     });
 
