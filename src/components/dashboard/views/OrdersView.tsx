@@ -79,6 +79,7 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
             date: new Date().toISOString(),
             status: "non traité" as const
           }];
+          localStorage.setItem('orders', JSON.stringify(updatedOrders));
           return updatedOrders;
         });
         
@@ -92,6 +93,27 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
         });
       }
     };
+
+    // Also check for pending orders on mount
+    const pendingOrder = localStorage.getItem('pendingOrder');
+    if (pendingOrder) {
+      const newOrder = JSON.parse(pendingOrder);
+      setOrders(prevOrders => {
+        const updatedOrders = [...prevOrders, {
+          ...newOrder,
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          status: "non traité" as const
+        }];
+        localStorage.setItem('orders', JSON.stringify(updatedOrders));
+        return updatedOrders;
+      });
+      localStorage.removeItem('pendingOrder');
+      toast({
+        title: "Nouvelle commande !",
+        description: `Commande reçue de ${newOrder.customer}`,
+      });
+    }
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
