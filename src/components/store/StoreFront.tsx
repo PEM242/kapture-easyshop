@@ -27,9 +27,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const location = useLocation();
-  
-  // Check if the user came from the dashboard (merchant view)
-  const isMerchantView = location.state?.fromDashboard || false;
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
@@ -37,7 +34,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       setStoreData(JSON.parse(savedStoreData));
     }
 
-    // Check if store is published from localStorage
     const publishStatus = localStorage.getItem('isStorePublished');
     if (publishStatus) {
       setIsPublished(JSON.parse(publishStatus));
@@ -46,7 +42,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
-    // Dispatch storeView event when the store is visited
     const event = new Event('storeView');
     document.dispatchEvent(event);
     
