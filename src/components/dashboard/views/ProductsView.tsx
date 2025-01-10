@@ -12,6 +12,7 @@ interface ProductsViewProps {
 
 const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<{ index: number; product: any } | null>(null);
   const { toast } = useToast();
 
   const handleAddProduct = (product: any) => {
@@ -21,6 +22,23 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
     };
     onUpdateStore(updatedStore);
     setShowAddProduct(false);
+  };
+
+  const handleEditProduct = (product: any) => {
+    if (editingProduct) {
+      const updatedProducts = [...storeData.products];
+      updatedProducts[editingProduct.index] = product;
+      const updatedStore = {
+        ...storeData,
+        products: updatedProducts,
+      };
+      onUpdateStore(updatedStore);
+      setEditingProduct(null);
+      toast({
+        title: "Produit modifié",
+        description: "Le produit a été modifié avec succès.",
+      });
+    }
   };
 
   const handleDeleteProduct = (index: number) => {
@@ -59,7 +77,6 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
         }
       }
     } else {
-      // Fallback to copying the URL
       try {
         await navigator.clipboard.writeText(storeUrl);
         toast({
@@ -87,6 +104,25 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
           Retour
         </Button>
         <ProductForm onAddProduct={handleAddProduct} storeType={storeData.type} />
+      </div>
+    );
+  }
+
+  if (editingProduct) {
+    return (
+      <div className="py-6">
+        <Button
+          variant="ghost"
+          onClick={() => setEditingProduct(null)}
+          className="mb-4"
+        >
+          Retour
+        </Button>
+        <ProductForm 
+          onAddProduct={handleEditProduct} 
+          storeType={storeData.type} 
+          initialData={editingProduct.product}
+        />
       </div>
     );
   }
@@ -125,7 +161,11 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
             <Button variant="ghost" size="icon" onClick={() => handleShare(product)}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setEditingProduct({ index, product })}
+            >
               <Edit className="h-4 w-4" />
             </Button>
             <Button 
