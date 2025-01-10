@@ -8,7 +8,6 @@ import { CartProvider } from "@/contexts/CartContext";
 import CartModal from "./cart/CartModal";
 import StoreCover from "./sections/StoreCover";
 import FeaturedProducts from "./sections/FeaturedProducts";
-import PublishButton from "./sections/PublishButton";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
@@ -28,21 +27,21 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Charger les données du store
     const savedStoreData = localStorage.getItem('storeData');
     if (savedStoreData) {
       setStoreData(JSON.parse(savedStoreData));
     }
 
+    // Vérifier si la boutique est publiée
     const publishStatus = localStorage.getItem('isStorePublished');
     if (publishStatus) {
       setIsPublished(JSON.parse(publishStatus));
     }
 
+    // Gestionnaire pour le panier
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
-    
-    const event = new Event('storeView');
-    document.dispatchEvent(event);
     
     return () => {
       document.removeEventListener('openCart', handleOpenCart);
@@ -85,7 +84,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Navigation Buttons - Always visible at the top */}
+        {/* Boutons de navigation - Toujours visibles en haut */}
         <div className="fixed top-4 left-4 z-50 flex gap-2">
           <Button
             variant="outline"
@@ -144,7 +143,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('footer')} 
         />
 
-        {/* Publish Button - Only visible when not published */}
+        {/* Bouton de publication - Visible uniquement quand non publié */}
         {!isPublished && (
           <div className="fixed bottom-4 right-4 z-50">
             <Button
