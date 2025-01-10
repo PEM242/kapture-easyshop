@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -52,28 +52,50 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
   const [isProcessDialogOpen, setIsProcessDialogOpen] = useState(false);
   const [isDeliveryDialogOpen, setIsDeliveryDialogOpen] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "1",
-      customer: "Jean Mbemba",
-      phone: "+221 77 123 45 67",
-      address: "123 Rue de Dakar, Sénégal",
-      payment: "Paiement à la livraison",
-      delivery: "Livraison à domicile",
-      total: 12000,
-      date: "2024-02-20 14:30",
-      status: "non traité",
-      items: [
-        {
-          productId: "1",
-          name: "Produit 1",
-          quantity: 2,
-          price: 6000,
-        },
-      ],
-    },
-  ]);
+  // Load orders from localStorage on component mount
+  useEffect(() => {
+    const savedOrders = localStorage.getItem('orders');
+    if (savedOrders) {
+      setOrders(JSON.parse(savedOrders));
+    }
+  }, []);
+
+  // Save orders to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }, [orders]);
+
+  // Listen for new orders from localStorage changes in other tabs/windows
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pendingOrder' && e.newValue) {
+        const newOrder = JSON.parse(e.newValue);
+        setOrders(prevOrders => {
+          const updatedOrders = [...prevOrders, {
+            ...newOrder,
+            id: Date.now().toString(),
+            date: new Date().toISOString(),
+            status: "non traité" as const
+          }];
+          return updatedOrders;
+        });
+        
+        // Clear the pending order
+        localStorage.removeItem('pendingOrder');
+        
+        // Show notification
+        toast({
+          title: "Nouvelle commande !",
+          description: `Commande reçue de ${newOrder.customer}`,
+        });
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [toast]);
 
   const handleProcessOrder = (orderId: string) => {
     const order = orders.find((o) => o.id === orderId);
@@ -145,6 +167,8 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
       minute: "2-digit",
     }).format(date);
   };
+
+  // ... keep existing code (return JSX with Table and Dialog components)
 
   return (
     <div className="py-6">
