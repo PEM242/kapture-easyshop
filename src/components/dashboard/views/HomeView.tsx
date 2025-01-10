@@ -1,8 +1,10 @@
 import { StoreData } from "../../store-creator/types";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link, RefreshCw, DollarSign, ShoppingBag } from "lucide-react";
+import { Link, RefreshCw, DollarSign, ShoppingBag, Share2, Copy } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface HomeViewProps {
   storeData: StoreData;
@@ -23,6 +25,7 @@ interface StoreStats {
 }
 
 const HomeView = ({ storeData }: HomeViewProps) => {
+  const { toast } = useToast();
   const [stats, setStats] = useState<StoreStats>({
     totalOrders: 0,
     pendingOrders: 0,
@@ -33,6 +36,50 @@ const HomeView = ({ storeData }: HomeViewProps) => {
       { type: "Récupération sur place", value: 0 },
     ],
   });
+
+  const storeUrl = `${window.location.origin}/store`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(storeUrl);
+      toast({
+        title: "Lien copié !",
+        description: "Le lien de votre boutique a été copié dans le presse-papier.",
+      });
+    } catch (err) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de copier le lien. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: storeData.name,
+          text: `Découvrez ma boutique ${storeData.name}`,
+          url: storeUrl,
+        });
+        toast({
+          title: "Partage réussi !",
+          description: "Votre boutique a été partagée avec succès.",
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          toast({
+            title: "Erreur",
+            description: "Impossible de partager la boutique. Veuillez réessayer.",
+            variant: "destructive",
+          });
+        }
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
 
   useEffect(() => {
     // Initialize stats from localStorage or create new
@@ -103,6 +150,36 @@ const HomeView = ({ storeData }: HomeViewProps) => {
 
   return (
     <div className="space-y-6 py-6">
+      {/* Publish Store Card */}
+      <Card className="bg-white rounded-3xl shadow-sm p-6">
+        <CardContent className="p-0 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">Publier votre boutique</h3>
+              <p className="text-gray-600 mt-1">Partagez votre boutique avec vos clients</p>
+              <p className="text-sm text-gray-500 mt-2">{storeUrl}</p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleCopyLink}
+                variant="outline"
+                className="gap-2"
+              >
+                <Copy className="w-4 h-4" />
+                Copier
+              </Button>
+              <Button
+                onClick={handleShare}
+                className="gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Partager
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="bg-white rounded-3xl shadow-sm p-6">
           <CardContent className="p-0 flex items-center gap-4">
