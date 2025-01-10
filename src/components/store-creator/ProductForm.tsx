@@ -303,3 +303,6 @@ const ProductForm = ({ onAddProduct, storeType, initialData }: ProductFormProps)
       </div>
     </div>
   );
+};
+
+export default ProductForm;
