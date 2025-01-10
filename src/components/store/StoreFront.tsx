@@ -37,6 +37,12 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       setStoreData(JSON.parse(savedStoreData));
     }
 
+    // Check if store is published from localStorage
+    const publishStatus = localStorage.getItem('isStorePublished');
+    if (publishStatus) {
+      setIsPublished(JSON.parse(publishStatus));
+    }
+
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
@@ -63,6 +69,15 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
         variant: "destructive",
       });
     }
+  };
+
+  const handlePublish = () => {
+    setIsPublished(true);
+    localStorage.setItem('isStorePublished', 'true');
+    toast({
+      title: "Boutique publiée !",
+      description: "Votre boutique est maintenant visible par tous.",
+    });
   };
 
   if (!storeData.type || !storeData.name) {
@@ -134,10 +149,10 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('footer')} 
         />
 
-        {!isPublished && isMerchantView && (
+        {isMerchantView && !isPublished && (
           <PublishButton 
             isPublished={isPublished}
-            onPublish={() => setIsPublished(true)}
+            onPublish={handlePublish}
             storeName={storeData.name}
           />
         )}
