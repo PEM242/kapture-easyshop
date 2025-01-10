@@ -42,11 +42,24 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
       return;
     }
 
-    console.log("Order submitted:", {
-      items,
+    // Créer l'objet de commande
+    const order = {
+      customer: formData.name,
+      phone: formData.phone,
+      address: formData.address,
+      payment: formData.paymentMethod === "cash" ? "Paiement à la livraison" : "Paiement sur place",
+      delivery: formData.deliveryMethod === "delivery" ? "Livraison à domicile" : "Retrait en boutique",
       total,
-      customerInfo: formData,
-    });
+      items: items.map(item => ({
+        productId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      }))
+    };
+
+    // Sauvegarder la commande dans localStorage
+    localStorage.setItem('pendingOrder', JSON.stringify(order));
 
     toast({
       title: "Commande confirmée !",

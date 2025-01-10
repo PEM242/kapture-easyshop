@@ -168,8 +168,6 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
     }).format(date);
   };
 
-  // ... keep existing code (return JSX with Table and Dialog components)
-
   return (
     <div className="py-6">
       <Table>
@@ -270,8 +268,8 @@ const OrdersView = ({ storeData }: OrdersViewProps) => {
 
                 <div className="bg-yellow-50 p-4 rounded-lg">
                   <p className="text-yellow-800">
-                    Contactez le client pour confirmer cette commande avant de la
-                    marquer comme "Traité".
+                    Contactez le client pour confirmer cette commande avant de
+                    la marquer comme "Traité".
                   </p>
                 </div>
 
