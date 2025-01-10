@@ -5,6 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SettingsViewProps {
   storeData: StoreData;
@@ -13,6 +20,16 @@ interface SettingsViewProps {
 
 const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
   const { toast } = useToast();
+  
+  const countries = [
+    "France",
+    "Belgique",
+    "Suisse",
+    "Canada",
+    "Maroc",
+    "Sénégal",
+    "Côte d'Ivoire",
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +88,64 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
             onChange={(e) =>
               onUpdateStore({ ...storeData, address: e.target.value })
             }
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="city">Ville</Label>
+          <Input
+            id="city"
+            value={storeData.city || ""}
+            onChange={(e) =>
+              onUpdateStore({ ...storeData, city: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="country">Pays</Label>
+          <Select
+            value={storeData.country}
+            onValueChange={(value) =>
+              onUpdateStore({ ...storeData, country: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionnez votre pays" />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((country) => (
+                <SelectItem key={country} value={country}>
+                  {country}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="shippingPolicy">Politique de livraison</Label>
+          <Textarea
+            id="shippingPolicy"
+            value={storeData.shippingPolicy}
+            onChange={(e) =>
+              onUpdateStore({ ...storeData, shippingPolicy: e.target.value })
+            }
+            placeholder="Décrivez votre politique de livraison"
+            className="h-32"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="refundPolicy">Politique de retour</Label>
+          <Textarea
+            id="refundPolicy"
+            value={storeData.refundPolicy}
+            onChange={(e) =>
+              onUpdateStore({ ...storeData, refundPolicy: e.target.value })
+            }
+            placeholder="Décrivez votre politique de retour"
+            className="h-32"
           />
         </div>
       </div>
