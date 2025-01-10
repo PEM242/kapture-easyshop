@@ -1,7 +1,7 @@
 import { StoreData } from "../../store-creator/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, RefreshCw, DollarSign, ShoppingBag, Share2, Copy } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -18,10 +18,6 @@ interface StoreStats {
     date: string;
     orders: number;
   }>;
-  deliveryStats: Array<{
-    type: string;
-    value: number;
-  }>;
 }
 
 const HomeView = ({ storeData }: HomeViewProps) => {
@@ -31,10 +27,6 @@ const HomeView = ({ storeData }: HomeViewProps) => {
     pendingOrders: 0,
     totalViews: 0,
     orderHistory: [],
-    deliveryStats: [
-      { type: "Livraison à domicile", value: 0 },
-      { type: "Récupération sur place", value: 0 },
-    ],
   });
 
   const storeUrl = `${window.location.origin}/store`;
@@ -91,24 +83,18 @@ const HomeView = ({ storeData }: HomeViewProps) => {
     // Listen for new orders
     const handleNewOrder = () => {
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
+      const processedOrders = orders.filter((order: any) => order.status === 'traité').length;
+      const pendingOrders = orders.filter((order: any) => order.status === 'non traité').length;
       
       setStats(prevStats => {
         const newStats = {
           ...prevStats,
-          totalOrders: orders.length,
+          totalOrders: processedOrders,
           pendingOrders: pendingOrders,
           orderHistory: [
             ...prevStats.orderHistory,
-            { date: new Date().toLocaleDateString(), orders: orders.length }
+            { date: new Date().toLocaleDateString(), orders: processedOrders }
           ],
-          deliveryStats: prevStats.deliveryStats.map(stat => ({
-            ...stat,
-            value: orders.filter((order: any) => 
-              (stat.type === "Livraison à domicile" && order.deliveryMethod === "delivery") ||
-              (stat.type === "Récupération sur place" && order.deliveryMethod === "pickup")
-            ).length
-          }))
         };
         localStorage.setItem('storeStats', JSON.stringify(newStats));
         return newStats;
@@ -144,8 +130,6 @@ const HomeView = ({ storeData }: HomeViewProps) => {
       document.removeEventListener('storeView', handleStoreView);
     };
   }, []);
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
   return (
     <div className="space-y-6 py-6">
@@ -187,7 +171,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
             </div>
             <div>
               <p className="text-4xl font-semibold">{stats.totalOrders}</p>
-              <p className="text-gray-600">Commandes totales</p>
+              <p className="text-gray-600">Commandes traitées</p>
             </div>
           </CardContent>
         </Card>
@@ -199,7 +183,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
             </div>
             <div>
               <p className="text-4xl font-semibold">{stats.pendingOrders}</p>
-              <p className="text-gray-600">Commandes en cours</p>
+              <p className="text-gray-600">Commandes non traitées</p>
             </div>
           </CardContent>
         </Card>
@@ -217,7 +201,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card className="bg-white rounded-3xl shadow-sm p-6">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-800">Évolution des commandes</h3>
@@ -230,32 +214,6 @@ const HomeView = ({ storeData }: HomeViewProps) => {
                 <YAxis stroke="#666" fontSize={12} />
                 <Bar dataKey="orders" fill="#4CAF50" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <Card className="bg-white rounded-3xl shadow-sm p-6">
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Répartition des commandes</h3>
-          </div>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={stats.deliveryStats}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {stats.deliveryStats.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
             </ResponsiveContainer>
           </div>
         </Card>
