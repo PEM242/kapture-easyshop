@@ -27,11 +27,9 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const savedStoreData = localStorage.getItem('storeData');
-    if (savedStoreData) {
-      setStoreData(JSON.parse(savedStoreData));
-    }
-
+    // Mettre à jour les données du magasin si elles changent
+    setStoreData(initialStoreData);
+    
     // Vérifier si la boutique est publiée
     const publishStatus = localStorage.getItem('isStorePublished');
     if (publishStatus === 'true') {
@@ -44,7 +42,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     return () => {
       document.removeEventListener('openCart', handleOpenCart);
     };
-  }, []);
+  }, [initialStoreData]);
 
   const handlePublish = () => {
     setIsPublished(true);
@@ -84,25 +82,21 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       <div className="min-h-screen flex flex-col relative">
         {/* Afficher les boutons uniquement si la boutique n'est pas publiée */}
         {!isPublished && (
-          <>
-            <div className="fixed top-4 left-4 z-50">
-              <Button
-                onClick={handlePublish}
-                className="bg-primary hover:bg-primary/90 text-white shadow-lg"
-              >
-                Publier ma boutique
-              </Button>
-            </div>
-            <div className="fixed bottom-4 right-4 z-50">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/dashboard')}
-                className="bg-white shadow-md hover:bg-gray-100"
-              >
-                Aller au tableau de bord
-              </Button>
-            </div>
-          </>
+          <div className="fixed top-4 left-4 z-50 flex gap-4">
+            <Button
+              onClick={handlePublish}
+              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+            >
+              Publier ma boutique
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard')}
+              className="bg-white shadow-md hover:bg-gray-100"
+            >
+              Aller au tableau de bord
+            </Button>
+          </div>
         )}
 
         {/* Afficher le bouton de partage une fois publié */}

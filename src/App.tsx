@@ -31,20 +31,23 @@ const App = () => {
 
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
-    const currentPath = window.location.pathname;
-    
-    // Ne charge les données que si on n'est pas sur la page de création
-    if (savedStoreData && currentPath !== "/") {
-      setStoreData(JSON.parse(savedStoreData));
+    if (savedStoreData) {
+      const parsedData = JSON.parse(savedStoreData);
+      setStoreData(parsedData);
     }
   }, []);
+
+  const handleStoreDataUpdate = (newData: StoreData) => {
+    setStoreData(newData);
+    localStorage.setItem('storeData', JSON.stringify(newData));
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index storeData={storeData} setStoreData={setStoreData} />} />
+            <Route path="/" element={<Index storeData={storeData} setStoreData={handleStoreDataUpdate} />} />
             <Route 
               path="/store" 
               element={
@@ -59,7 +62,7 @@ const App = () => {
               path="/dashboard" 
               element={
                 storeData.name ? (
-                  <Dashboard storeData={storeData} onUpdateStore={setStoreData} />
+                  <Dashboard storeData={storeData} onUpdateStore={handleStoreDataUpdate} />
                 ) : (
                   <Navigate to="/" />
                 )
