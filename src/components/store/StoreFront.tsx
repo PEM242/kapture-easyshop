@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StoreData } from "../store-creator/types";
+import { StoreData } from "../store-creator/StoreCreator";
 import StoreHeader from "./StoreHeader";
 import StoreFooter from "./StoreFooter";
 import ProductGrid from "./ProductGrid";
@@ -33,15 +33,9 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
       setStoreData(JSON.parse(savedStoreData));
     }
 
-    // Vérifier si c'est la première visite après création
-    const hasVisited = localStorage.getItem('hasVisitedStore');
-    if (hasVisited) {
-      setIsFirstVisit(false);
-    }
-
     // Vérifier si la boutique est publiée
     const publishStatus = localStorage.getItem('isStorePublished');
-    if (publishStatus) {
+    if (publishStatus === 'true') {
       setIsPublished(true);
       setIsFirstVisit(false);
     }
@@ -57,9 +51,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const handlePublish = () => {
     setIsPublished(true);
     localStorage.setItem('isStorePublished', 'true');
-    localStorage.setItem('hasVisitedStore', 'true');
-    setIsFirstVisit(false);
-    
     toast({
       title: "Boutique publiée !",
       description: "Votre boutique est maintenant en ligne. Vous pouvez la partager !",
@@ -93,8 +84,8 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Afficher les boutons uniquement lors de la première visite */}
-        {isFirstVisit && !isPublished && (
+        {/* Afficher les boutons uniquement si la boutique n'est pas publiée */}
+        {!isPublished && (
           <>
             <div className="fixed top-4 left-4 z-50">
               <Button
