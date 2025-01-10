@@ -42,7 +42,6 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
       return;
     }
 
-    // Here you would typically send the order to your backend
     console.log("Order submitted:", {
       items,
       total,
@@ -56,6 +55,13 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
 
     clearCart();
     onClose();
+  };
+
+  const getPaymentMethodLabel = (method: string) => {
+    if (formData.deliveryMethod === "pickup") {
+      return "Paiement sur place";
+    }
+    return "Paiement à la livraison";
   };
 
   return (
@@ -132,7 +138,7 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
         {storeData.paymentMethods.length > 1 && (
           <div>
             <label className="block text-sm font-medium mb-2">
-              Mode de paiement
+              Méthode de paiement
             </label>
             <div className="space-y-2">
               {storeData.paymentMethods.map((method) => (
@@ -147,9 +153,7 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
                     }
                     className="rounded-full"
                   />
-                  <span>
-                    {method === "cash" ? "Paiement à la livraison" : "Mobile Money"}
-                  </span>
+                  <span>{getPaymentMethodLabel(method)}</span>
                 </label>
               ))}
             </div>
