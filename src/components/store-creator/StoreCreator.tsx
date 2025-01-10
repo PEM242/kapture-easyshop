@@ -122,7 +122,9 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         }
         break;
       case 3:
-        if (!storeData.theme || !storeData.payment_methods.length || !storeData.delivery_methods.length) {
+        if (!storeData.theme || 
+            !(storeData.payment_methods || []).length || 
+            !(storeData.delivery_methods || []).length) {
           toast({
             title: "Configuration incomplète",
             description: "Veuillez compléter la configuration de votre boutique",
