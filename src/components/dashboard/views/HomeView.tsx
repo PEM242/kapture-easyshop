@@ -2,29 +2,102 @@ import { StoreData } from "../../store-creator/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, RefreshCw, DollarSign, ShoppingBag } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useEffect, useState } from "react";
 
 interface HomeViewProps {
   storeData: StoreData;
 }
 
-const HomeView = ({ storeData }: HomeViewProps) => {
-  // Données factices pour les graphiques
-  const salesData = [
-    { name: "30/09", ventes: 400 },
-    { name: "17/10", ventes: 300 },
-    { name: "02/11", ventes: 600 },
-    { name: "18/11", ventes: 200 },
-    { name: "05/12", ventes: 800 },
-    { name: "22/12", ventes: 900 },
-    { name: "08/01", ventes: 500 },
-    { name: "25/01", ventes: 700 },
-  ];
+interface StoreStats {
+  totalOrders: number;
+  pendingOrders: number;
+  totalViews: number;
+  orderHistory: Array<{
+    date: string;
+    orders: number;
+  }>;
+  deliveryStats: Array<{
+    type: string;
+    value: number;
+  }>;
+}
 
-  const pieData = [
-    { name: "Produits", value: 400 },
-    { name: "Services", value: 300 },
-    { name: "Autres", value: 300 },
-  ];
+const HomeView = ({ storeData }: HomeViewProps) => {
+  const [stats, setStats] = useState<StoreStats>({
+    totalOrders: 0,
+    pendingOrders: 0,
+    totalViews: 0,
+    orderHistory: [],
+    deliveryStats: [
+      { type: "Livraison à domicile", value: 0 },
+      { type: "Récupération sur place", value: 0 },
+    ],
+  });
+
+  useEffect(() => {
+    // Initialize stats from localStorage or create new
+    const savedStats = localStorage.getItem('storeStats');
+    if (savedStats) {
+      setStats(JSON.parse(savedStats));
+    }
+
+    // Listen for new orders
+    const handleNewOrder = (event: CustomEvent) => {
+      setStats(prevStats => {
+        const newStats = {
+          ...prevStats,
+          totalOrders: prevStats.totalOrders + 1,
+          pendingOrders: prevStats.pendingOrders + 1,
+          orderHistory: [
+            ...prevStats.orderHistory,
+            { date: new Date().toLocaleDateString(), orders: prevStats.totalOrders + 1 }
+          ],
+          deliveryStats: prevStats.deliveryStats.map(stat => ({
+            ...stat,
+            value: stat.type === event.detail.deliveryType ? stat.value + 1 : stat.value
+          }))
+        };
+        localStorage.setItem('storeStats', JSON.stringify(newStats));
+        return newStats;
+      });
+    };
+
+    // Listen for order status updates
+    const handleOrderStatusUpdate = (event: CustomEvent) => {
+      setStats(prevStats => {
+        const newStats = {
+          ...prevStats,
+          pendingOrders: prevStats.pendingOrders - 1,
+        };
+        localStorage.setItem('storeStats', JSON.stringify(newStats));
+        return newStats;
+      });
+    };
+
+    // Listen for store views
+    const handleStoreView = () => {
+      setStats(prevStats => {
+        const newStats = {
+          ...prevStats,
+          totalViews: prevStats.totalViews + 1,
+        };
+        localStorage.setItem('storeStats', JSON.stringify(newStats));
+        return newStats;
+      });
+    };
+
+    // Add event listeners
+    document.addEventListener('newOrder', handleNewOrder as EventListener);
+    document.addEventListener('orderStatusUpdate', handleOrderStatusUpdate as EventListener);
+    document.addEventListener('storeView', handleStoreView);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('newOrder', handleNewOrder as EventListener);
+      document.removeEventListener('orderStatusUpdate', handleOrderStatusUpdate as EventListener);
+      document.removeEventListener('storeView', handleStoreView);
+    };
+  }, []);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
@@ -37,7 +110,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
               <DollarSign className="w-6 h-6 text-[#4CAF50]" />
             </div>
             <div>
-              <p className="text-4xl font-semibold">45</p>
+              <p className="text-4xl font-semibold">{stats.totalOrders}</p>
               <p className="text-gray-600">Commandes totales</p>
             </div>
           </CardContent>
@@ -49,7 +122,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
               <ShoppingBag className="w-6 h-6 text-[#4CAF50]" />
             </div>
             <div>
-              <p className="text-4xl font-semibold">12</p>
+              <p className="text-4xl font-semibold">{stats.pendingOrders}</p>
               <p className="text-gray-600">Commandes en cours</p>
             </div>
           </CardContent>
@@ -61,7 +134,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
               <RefreshCw className="w-6 h-6 text-[#4CAF50]" />
             </div>
             <div>
-              <p className="text-4xl font-semibold">156</p>
+              <p className="text-4xl font-semibold">{stats.totalViews}</p>
               <p className="text-gray-600">Vues totales de la boutique</p>
             </div>
           </CardContent>
@@ -71,15 +144,15 @@ const HomeView = ({ storeData }: HomeViewProps) => {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="bg-white rounded-3xl shadow-sm p-6">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Évolution des ventes</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Évolution des commandes</h3>
           </div>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={salesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <BarChart data={stats.orderHistory} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" stroke="#666" fontSize={12} />
+                <XAxis dataKey="date" stroke="#666" fontSize={12} />
                 <YAxis stroke="#666" fontSize={12} />
-                <Bar dataKey="ventes" fill="#4CAF50" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="orders" fill="#4CAF50" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -87,13 +160,13 @@ const HomeView = ({ storeData }: HomeViewProps) => {
 
         <Card className="bg-white rounded-3xl shadow-sm p-6">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Répartition des ventes</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Répartition des commandes</h3>
           </div>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={stats.deliveryStats}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -102,7 +175,7 @@ const HomeView = ({ storeData }: HomeViewProps) => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
+                  {stats.deliveryStats.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
