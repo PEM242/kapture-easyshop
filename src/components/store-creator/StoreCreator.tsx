@@ -16,6 +16,7 @@ export type StoreData = {
   cover: string;
   sector: string;
   address: string;
+  city: string;
   contact: string;
   shippingPolicy: string;
   refundPolicy: string;

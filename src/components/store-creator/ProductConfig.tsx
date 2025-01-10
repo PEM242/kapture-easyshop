@@ -47,6 +47,7 @@ const ProductConfig = ({ storeData, setStoreData }: ProductConfigProps) => {
       cover: "",
       sector: "",
       address: "",
+      city: "",
       contact: "",
       shippingPolicy: "",
       refundPolicy: "",
