@@ -51,7 +51,6 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
       delivery: formData.deliveryMethod === "delivery" ? "Livraison à domicile" : "Retrait en boutique",
       total,
       items: items.map(item => ({
-        productId: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price
