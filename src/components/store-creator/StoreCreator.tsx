@@ -9,52 +9,7 @@ import ProgressBar from "./ProgressBar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Store } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-export type StoreData = {
-  type: string;
-  name: string;
-  logo: string;
-  cover: string;
-  sector: string;
-  address: string;
-  city: string;
-  contact: string;
-  shipping_policy: string; // Updated to match DB column name
-  refund_policy: string; // Updated to match DB column name
-  country: string;
-  theme: string;
-  payment_methods: string[]; // Updated to match DB column name
-  delivery_methods: string[]; // Updated to match DB column name
-  products: Product[];
-};
-
-export type Product = {
-  name: string;
-  price: number;
-  description: string;
-  images: {
-    main: string;
-    gallery: string[];
-  };
-  category: string;
-  customization: {
-    sizes?: string[];
-    colors?: string[];
-    shoesSizes?: string[];
-    customSizes?: string;
-    customColors?: string;
-  };
-  discount: {
-    type: 'percentage' | 'fixed' | null;
-    value: number;
-    finalPrice: number;
-  };
-  isActive: boolean;
-  inStock: boolean;
-  featured?: {
-    collectionName: string;
-  };
-};
+import { StoreData, Product } from "./types";
 
 interface StoreCreatorProps {
   storeData: StoreData;
@@ -95,17 +50,11 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           console.log("Tentative de création de la boutique pour l'utilisateur:", user.id);
           console.log("Données de la boutique:", storeData);
 
-          // Prepare store data with correct column names
           const storeDataForDB = {
             ...storeData,
             owner_id: user.id,
-            shipping_policy: storeData.shipping_policy,
-            refund_policy: storeData.refund_policy,
-            payment_methods: storeData.payment_methods,
-            delivery_methods: storeData.delivery_methods,
           };
 
-          // Remove products array as it's not a column in the stores table
           delete (storeDataForDB as any).products;
 
           const { data: store, error: storeError } = await supabase
@@ -173,7 +122,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         }
         break;
       case 3:
-        if (!storeData.theme || !storeData.paymentMethods.length || !storeData.deliveryMethods.length) {
+        if (!storeData.theme || !storeData.payment_methods.length || !storeData.delivery_methods.length) {
           toast({
             title: "Configuration incomplète",
             description: "Veuillez compléter la configuration de votre boutique",
