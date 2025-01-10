@@ -24,21 +24,6 @@ export type Database = {
         }
         Relationships: []
       }
-      stores: {
-        Row: {
-          logo: string
-          name: string
-        }
-        Insert: {
-          logo: string
-          name: string
-        }
-        Update: {
-          logo?: string
-          name?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
