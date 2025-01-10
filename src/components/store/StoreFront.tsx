@@ -91,28 +91,26 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col">
-        {isMerchantView && (
-          <div className="fixed top-4 left-4 z-50 flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/dashboard')}
-              className="bg-white shadow-md hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour au tableau de bord
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="bg-white shadow-md hover:bg-gray-100"
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              Partager
-            </Button>
-          </div>
-        )}
+        <div className="fixed top-4 left-4 z-50 flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="bg-white shadow-md hover:bg-gray-100"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Retour au tableau de bord
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleShare}
+            className="bg-white shadow-md hover:bg-gray-100"
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Partager
+          </Button>
+        </div>
 
         <StoreHeader 
           storeData={storeData} 
@@ -149,12 +147,14 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('footer')} 
         />
 
-        {isMerchantView && !isPublished && (
-          <PublishButton 
-            isPublished={isPublished}
-            onPublish={handlePublish}
-            storeName={storeData.name}
-          />
+        {!isPublished && (
+          <div className="fixed bottom-4 right-4 z-50">
+            <PublishButton 
+              isPublished={isPublished}
+              onPublish={handlePublish}
+              storeName={storeData.name}
+            />
+          </div>
         )}
 
         <CartModal
