@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import StoreFront from "./components/store/StoreFront";
+import Dashboard from "./components/dashboard/Dashboard";
 import { useState, useEffect } from "react";
 import { StoreData } from "./components/store-creator/StoreCreator";
 
@@ -46,6 +47,16 @@ const App = () => {
               element={
                 storeData.name ? (
                   <StoreFront storeData={storeData} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                storeData.name ? (
+                  <Dashboard storeData={storeData} onUpdateStore={setStoreData} />
                 ) : (
                   <Navigate to="/" />
                 )

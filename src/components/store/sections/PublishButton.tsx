@@ -14,7 +14,6 @@ const PublishButton = ({ storeName, isPublished, onPublish }: PublishButtonProps
 
   const handlePublish = () => {
     onPublish();
-    // Generate a URL-friendly version of the store name
     const storeUrl = `${window.location.origin}/store/${storeName.toLowerCase().replace(/\s+/g, '-')}`;
     
     toast({
