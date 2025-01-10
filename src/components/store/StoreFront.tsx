@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StoreData } from "../store-creator/StoreCreator";
+import { StoreData } from "../store-creator/types";
 import StoreHeader from "./StoreHeader";
 import StoreFooter from "./StoreFooter";
 import ProductGrid from "./ProductGrid";
