@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImageUpload } from "@/components/ui/ImageUpload";
+import ImageUpload from "@/components/ui/ImageUpload";
 import { Label } from "@/components/ui/label";
 
 interface ProductImagesProps {
