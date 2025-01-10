@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { StoreData } from "../store-creator/StoreCreator";
+import { useCart } from "@/contexts/CartContext";
 
 interface StoreHeaderProps {
   storeData: StoreData;
   themeClasses: string;
+  onCartClick: () => void;
 }
 
-const StoreHeader = ({ storeData, themeClasses }: StoreHeaderProps) => {
+const StoreHeader = ({ storeData, themeClasses, onCartClick }: StoreHeaderProps) => {
+  const { items } = useCart();
+  
   const getNavigationLinks = () => {
     switch (storeData.type) {
       case "retail":
@@ -40,11 +44,18 @@ const StoreHeader = ({ storeData, themeClasses }: StoreHeaderProps) => {
                 {link}
               </a>
             ))}
-            <Button variant="outline" size="icon" className="relative">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="relative"
+              onClick={onCartClick}
+            >
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                0
-              </span>
+              {items.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {items.length}
+                </span>
+              )}
             </Button>
           </nav>
         </div>

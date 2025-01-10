@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import ProductGallery from "./product-details/ProductGallery";
 import ProductCustomization from "./product-details/ProductCustomization";
 import ProductActions from "./product-details/ProductActions";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductDetailsProps {
   product: Product;
@@ -19,6 +20,7 @@ const ProductDetails = ({ product, themeClasses, onClose }: ProductDetailsProps)
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const { toast } = useToast();
+  const { addItem } = useCart();
 
   const handleAddToCart = () => {
     if (!selectedSize && product.customization.sizes?.length) {
@@ -37,10 +39,15 @@ const ProductDetails = ({ product, themeClasses, onClose }: ProductDetailsProps)
       });
       return;
     }
+
+    addItem(product, 1, selectedSize, selectedColor);
+    
     toast({
       title: "Produit ajouté",
       description: "Le produit a été ajouté au panier",
     });
+    
+    onClose();
   };
 
   const handleBuyNow = () => {
@@ -60,10 +67,11 @@ const ProductDetails = ({ product, themeClasses, onClose }: ProductDetailsProps)
       });
       return;
     }
-    toast({
-      title: "Redirection",
-      description: "Redirection vers la page de paiement...",
-    });
+
+    addItem(product, 1, selectedSize, selectedColor);
+    onClose();
+    // Trigger cart modal open through parent component
+    document.dispatchEvent(new CustomEvent('openCart'));
   };
 
   return (
