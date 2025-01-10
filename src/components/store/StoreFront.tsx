@@ -22,7 +22,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(true);
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -37,7 +36,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
     const publishStatus = localStorage.getItem('isStorePublished');
     if (publishStatus === 'true') {
       setIsPublished(true);
-      setIsFirstVisit(false);
     }
 
     const handleOpenCart = () => setIsCartOpen(true);
