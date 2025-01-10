@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import StoreType from "./StoreType";
 import StoreConfig from "./StoreConfig";
 import StoreTheme from "./StoreTheme";
@@ -65,16 +66,75 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const [isStoreCreated, setIsStoreCreated] = useState(false);
   const { toast } = useToast();
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (validateCurrentStep()) {
       if (currentStep === 4) {
-        // Save store data to localStorage
-        localStorage.setItem('storeData', JSON.stringify(storeData));
-        setIsStoreCreated(true);
-        toast({
-          title: "Boutique créée avec succès!",
-          description: "Cliquez sur le lien ci-dessous pour visualiser votre boutique.",
-        });
+        try {
+          // Get the current user
+          const { data: { user }, error: userError } = await supabase.auth.getUser();
+          
+          if (userError) {
+            console.error("Erreur lors de la récupération de l'utilisateur:", userError);
+            toast({
+              title: "Erreur",
+              description: "Impossible de créer la boutique. Veuillez vous reconnecter.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          if (!user) {
+            console.error("Aucun utilisateur connecté");
+            toast({
+              title: "Erreur",
+              description: "Vous devez être connecté pour créer une boutique.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          console.log("Tentative de création de la boutique pour l'utilisateur:", user.id);
+          console.log("Données de la boutique:", storeData);
+
+          // Insert the store data
+          const { data: store, error: storeError } = await supabase
+            .from('stores')
+            .insert([
+              {
+                ...storeData,
+                owner_id: user.id,
+              }
+            ])
+            .select()
+            .single();
+
+          if (storeError) {
+            console.error("Erreur lors de la création de la boutique:", storeError);
+            toast({
+              title: "Erreur",
+              description: "Impossible de créer la boutique. Veuillez réessayer.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          console.log("Boutique créée avec succès:", store);
+
+          // Save store data to localStorage
+          localStorage.setItem('storeData', JSON.stringify(storeData));
+          setIsStoreCreated(true);
+          toast({
+            title: "Boutique créée avec succès!",
+            description: "Cliquez sur le lien ci-dessous pour visualiser votre boutique.",
+          });
+        } catch (error) {
+          console.error("Erreur inattendue:", error);
+          toast({
+            title: "Erreur",
+            description: "Une erreur inattendue s'est produite. Veuillez réessayer.",
+            variant: "destructive",
+          });
+        }
       } else {
         setCurrentStep((prev) => Math.min(prev + 1, 4));
       }
