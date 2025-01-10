@@ -89,32 +89,26 @@ const HomeView = ({ storeData }: HomeViewProps) => {
     }
 
     // Listen for new orders
-    const handleNewOrder = (event: CustomEvent) => {
+    const handleNewOrder = () => {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
+      
       setStats(prevStats => {
         const newStats = {
           ...prevStats,
-          totalOrders: prevStats.totalOrders + 1,
-          pendingOrders: prevStats.pendingOrders + 1,
+          totalOrders: orders.length,
+          pendingOrders: pendingOrders,
           orderHistory: [
             ...prevStats.orderHistory,
-            { date: new Date().toLocaleDateString(), orders: prevStats.totalOrders + 1 }
+            { date: new Date().toLocaleDateString(), orders: orders.length }
           ],
           deliveryStats: prevStats.deliveryStats.map(stat => ({
             ...stat,
-            value: stat.type === event.detail.deliveryType ? stat.value + 1 : stat.value
+            value: orders.filter((order: any) => 
+              (stat.type === "Livraison à domicile" && order.deliveryMethod === "delivery") ||
+              (stat.type === "Récupération sur place" && order.deliveryMethod === "pickup")
+            ).length
           }))
-        };
-        localStorage.setItem('storeStats', JSON.stringify(newStats));
-        return newStats;
-      });
-    };
-
-    // Listen for order status updates
-    const handleOrderStatusUpdate = (event: CustomEvent) => {
-      setStats(prevStats => {
-        const newStats = {
-          ...prevStats,
-          pendingOrders: prevStats.pendingOrders - 1,
         };
         localStorage.setItem('storeStats', JSON.stringify(newStats));
         return newStats;
@@ -134,14 +128,19 @@ const HomeView = ({ storeData }: HomeViewProps) => {
     };
 
     // Add event listeners
-    document.addEventListener('newOrder', handleNewOrder as EventListener);
-    document.addEventListener('orderStatusUpdate', handleOrderStatusUpdate as EventListener);
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'orders') {
+        handleNewOrder();
+      }
+    });
     document.addEventListener('storeView', handleStoreView);
+
+    // Initial load of orders
+    handleNewOrder();
 
     // Cleanup
     return () => {
-      document.removeEventListener('newOrder', handleNewOrder as EventListener);
-      document.removeEventListener('orderStatusUpdate', handleOrderStatusUpdate as EventListener);
+      window.removeEventListener('storage', handleNewOrder);
       document.removeEventListener('storeView', handleStoreView);
     };
   }, []);
