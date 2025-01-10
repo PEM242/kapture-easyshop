@@ -82,7 +82,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
               variant="outline"
               size="sm"
               onClick={() => navigate('/dashboard')}
-              className="bg-white shadow-md"
+              className="bg-white shadow-md hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour au tableau de bord
@@ -91,7 +91,7 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
               variant="outline"
               size="sm"
               onClick={handleShare}
-              className="bg-white shadow-md"
+              className="bg-white shadow-md hover:bg-gray-100"
             >
               <Share2 className="h-4 w-4 mr-2" />
               Partager
