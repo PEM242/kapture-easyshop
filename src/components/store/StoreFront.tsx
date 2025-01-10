@@ -47,18 +47,6 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
   return (
     <CartProvider>
       <div className="min-h-screen flex flex-col relative">
-        {/* Bouton fixe pour aller au tableau de bord avec style amélioré */}
-        <div className="fixed top-4 right-4 z-[9999]">
-          <Button
-            size="lg"
-            onClick={() => navigate('/dashboard')}
-            className="bg-primary text-white shadow-lg hover:bg-primary/90 font-semibold px-6"
-          >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Tableau de bord
-          </Button>
-        </div>
-
         <StoreHeader 
           storeData={storeData} 
           themeClasses={getThemeClasses('header')}
@@ -93,6 +81,18 @@ const StoreFront = ({ storeData: initialStoreData }: StoreFrontProps) => {
           storeData={storeData} 
           themeClasses={getThemeClasses('footer')} 
         />
+
+        {/* Bouton fixe pour aller au tableau de bord en bas au centre */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[9999]">
+          <Button
+            size="lg"
+            onClick={() => navigate('/dashboard')}
+            className="bg-primary text-white shadow-lg hover:bg-primary/90 font-semibold px-8 py-6 text-lg rounded-full"
+          >
+            <ArrowLeft className="h-6 w-6 mr-2" />
+            Aller au tableau de bord
+          </Button>
+        </div>
 
         <CartModal
           open={isCartOpen}
