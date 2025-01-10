@@ -9,6 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      products: {
+        Row: {
+          category: string | null
+          collection_name: string | null
+          colors: string[] | null
+          created_at: string | null
+          custom_colors: string | null
+          custom_sizes: string | null
+          description: string | null
+          discount_type: string | null
+          discount_value: number | null
+          final_price: number | null
+          gallery_images: string[] | null
+          id: string
+          in_stock: boolean | null
+          is_active: boolean | null
+          main_image: string | null
+          name: string
+          price: number
+          shoes_sizes: string[] | null
+          sizes: string[] | null
+          store_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          collection_name?: string | null
+          colors?: string[] | null
+          created_at?: string | null
+          custom_colors?: string | null
+          custom_sizes?: string | null
+          description?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          final_price?: number | null
+          gallery_images?: string[] | null
+          id?: string
+          in_stock?: boolean | null
+          is_active?: boolean | null
+          main_image?: string | null
+          name: string
+          price: number
+          shoes_sizes?: string[] | null
+          sizes?: string[] | null
+          store_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          collection_name?: string | null
+          colors?: string[] | null
+          created_at?: string | null
+          custom_colors?: string | null
+          custom_sizes?: string | null
+          description?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          final_price?: number | null
+          gallery_images?: string[] | null
+          id?: string
+          in_stock?: boolean | null
+          is_active?: boolean | null
+          main_image?: string | null
+          name?: string
+          price?: number
+          shoes_sizes?: string[] | null
+          sizes?: string[] | null
+          store_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       "Profils commercant": {
         Row: {
           created_at: string
@@ -21,6 +101,72 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      stores: {
+        Row: {
+          address: string | null
+          city: string | null
+          contact: string | null
+          country: string | null
+          cover: string | null
+          created_at: string | null
+          delivery_methods: string[] | null
+          id: string
+          is_active: boolean | null
+          logo: string | null
+          name: string
+          owner_id: string
+          payment_methods: string[] | null
+          refund_policy: string | null
+          sector: string | null
+          shipping_policy: string | null
+          theme: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          contact?: string | null
+          country?: string | null
+          cover?: string | null
+          created_at?: string | null
+          delivery_methods?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          logo?: string | null
+          name: string
+          owner_id: string
+          payment_methods?: string[] | null
+          refund_policy?: string | null
+          sector?: string | null
+          shipping_policy?: string | null
+          theme?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          contact?: string | null
+          country?: string | null
+          cover?: string | null
+          created_at?: string | null
+          delivery_methods?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          logo?: string | null
+          name?: string
+          owner_id?: string
+          payment_methods?: string[] | null
+          refund_policy?: string | null
+          sector?: string | null
+          shipping_policy?: string | null
+          theme?: string | null
+          type?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
