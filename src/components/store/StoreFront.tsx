@@ -47,6 +47,8 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
         />
         <FeaturedProducts 
           products={storeData.products || []}
+          themeClasses={getThemeClasses('text')}
+          storeType={storeData.type}
         />
         <div className="container mx-auto px-4 py-8">
           <ProductGrid 
@@ -57,6 +59,7 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
       </main>
       <StoreFooter 
         storeData={storeData}
+        themeClasses={getThemeClasses('text')}
       />
 
       <Button
