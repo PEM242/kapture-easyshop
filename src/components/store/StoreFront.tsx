@@ -1,25 +1,63 @@
 import { StoreData } from "../store-creator/types";
-import React from "react";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import CartModal from "./cart/CartModal";
+import MobileNav from "./MobileNav";
+import ProductGrid from "./ProductGrid";
 
 interface StoreFrontProps {
   storeData: StoreData;
 }
 
 const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const getButtonThemeClass = () => {
+    switch (storeData.theme) {
+      case 'theme1':
+        return 'bg-theme1-button text-white hover:bg-theme1-buttonHover';
+      case 'theme2':
+        return 'bg-theme2-button text-white hover:bg-theme2-buttonHover';
+      case 'theme3':
+        return 'bg-theme3-button text-white hover:bg-theme3-buttonHover';
+      default:
+        return 'bg-blue-600 text-white hover:bg-blue-700';
+    }
+  };
+
+  React.useEffect(() => {
+    const handleCartOpen = () => setIsCartOpen(true);
+    document.addEventListener('openCart', handleCartOpen);
+    return () => document.removeEventListener('openCart', handleCartOpen);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">{storeData.name}</h1>
-          {storeData.logo && (
-            <img 
-              src={storeData.logo} 
-              alt={`${storeData.name} logo`} 
-              className="h-12 w-auto object-contain"
-            />
-          )}
+          <div className="flex items-center gap-4">
+            {storeData.logo && (
+              <img 
+                src={storeData.logo} 
+                alt={`${storeData.name} logo`} 
+                className="h-12 w-auto object-contain"
+              />
+            )}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsCartOpen(true)}
+              className="relative"
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </header>
+      
+      <MobileNav />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -27,45 +65,10 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
           <p className="text-gray-600">{storeData.address}</p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {storeData.products.map((product, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="aspect-w-1 aspect-h-1">
-                {product.images.main ? (
-                  <img 
-                    src={product.images.main} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-400">Pas d'image</span>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="font-medium text-gray-900 mb-1">{product.name}</h3>
-                <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
-                <div className="flex items-center justify-between">
-                  {product.discount.finalPrice > 0 ? (
-                    <div className="flex flex-col">
-                      <span className="text-sm text-gray-500 line-through">
-                        {product.price} CFA
-                      </span>
-                      <span className="text-lg font-semibold text-red-600">
-                        {product.discount.finalPrice} CFA
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-lg font-semibold text-gray-900">
-                      {product.price} CFA
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ProductGrid 
+          storeData={storeData} 
+          buttonThemeClass={getButtonThemeClass()} 
+        />
       </main>
       
       <footer className="bg-white border-t mt-12">
@@ -76,6 +79,12 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
           </div>
         </div>
       </footer>
+
+      <CartModal 
+        open={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        storeData={storeData}
+      />
     </div>
   );
 };
