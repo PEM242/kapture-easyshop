@@ -1,58 +1,18 @@
 import { useState, useEffect } from "react";
-
-interface StoreStats {
-  totalOrders: number;
-  pendingOrders: number;
-  totalViews: number;
-  orderHistory: Array<{
-    date: string;
-    orders: number;
-  }>;
-}
+import { StatsService } from "@/services/StatsService";
 
 export const useHomeStats = () => {
-  const [stats, setStats] = useState<StoreStats>({
-    totalOrders: 0,
-    pendingOrders: 0,
-    totalViews: 0,
-    orderHistory: [],
-  });
+  const [stats, setStats] = useState(StatsService.getInitialStats());
 
   useEffect(() => {
-    const savedStats = localStorage.getItem('storeStats');
-    if (savedStats) {
-      setStats(JSON.parse(savedStats));
-    }
-
     const handleNewOrder = () => {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const processedOrders = orders.filter((order: any) => order.status === 'traité').length;
-      const pendingOrders = orders.filter((order: any) => order.status === 'non traité').length;
-      
-      setStats(prevStats => {
-        const newStats = {
-          ...prevStats,
-          totalOrders: processedOrders,
-          pendingOrders: pendingOrders,
-          orderHistory: [
-            ...prevStats.orderHistory,
-            { date: new Date().toLocaleDateString(), orders: processedOrders + pendingOrders }
-          ],
-        };
-        localStorage.setItem('storeStats', JSON.stringify(newStats));
-        return newStats;
-      });
+      const newStats = StatsService.updateStats();
+      setStats(newStats);
     };
 
     const handleStoreView = () => {
-      setStats(prevStats => {
-        const newStats = {
-          ...prevStats,
-          totalViews: prevStats.totalViews + 1,
-        };
-        localStorage.setItem('storeStats', JSON.stringify(newStats));
-        return newStats;
-      });
+      const newStats = StatsService.incrementViews();
+      setStats(newStats);
     };
 
     // Écouter les changements dans le localStorage
@@ -62,7 +22,7 @@ export const useHomeStats = () => {
       }
     });
 
-    // Écouter l'événement personnalisé pour les nouvelles commandes
+    // Écouter les événements personnalisés
     document.addEventListener('newOrder', handleNewOrder);
     document.addEventListener('storeView', handleStoreView);
 
