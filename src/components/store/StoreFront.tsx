@@ -1,5 +1,5 @@
 import { StoreData } from "../store-creator/types";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, LayoutDashboard } from "lucide-react";
 import CartModal from "./cart/CartModal";
@@ -14,6 +14,13 @@ interface StoreFrontProps {
 const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Clear orders when entering a new store
+  useEffect(() => {
+    if (storeData.name) {
+      localStorage.removeItem('orders');
+    }
+  }, [storeData.name]);
 
   const getButtonThemeClass = () => {
     switch (storeData.theme) {
@@ -35,7 +42,7 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative pb-20">
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">{storeData.name}</h1>
@@ -54,14 +61,6 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
               className="relative"
             >
               <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2"
-            >
-              <LayoutDashboard className="h-5 w-5" />
-              Tableau de bord
             </Button>
           </div>
         </div>
@@ -89,6 +88,18 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
           </div>
         </div>
       </footer>
+
+      {/* Fixed Dashboard Button */}
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <Button
+          variant="default"
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 shadow-lg"
+        >
+          <LayoutDashboard className="h-5 w-5" />
+          Tableau de bord
+        </Button>
+      </div>
 
       <CartModal 
         open={isCartOpen} 
