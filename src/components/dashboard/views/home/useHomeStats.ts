@@ -36,7 +36,7 @@ export const useHomeStats = () => {
           pendingOrders: pendingOrders,
           orderHistory: [
             ...prevStats.orderHistory,
-            { date: new Date().toLocaleDateString(), orders: processedOrders }
+            { date: new Date().toLocaleDateString(), orders: processedOrders + pendingOrders }
           ],
         };
         localStorage.setItem('storeStats', JSON.stringify(newStats));
@@ -55,17 +55,23 @@ export const useHomeStats = () => {
       });
     };
 
+    // Écouter les changements dans le localStorage
     window.addEventListener('storage', (e) => {
       if (e.key === 'orders') {
         handleNewOrder();
       }
     });
+
+    // Écouter l'événement personnalisé pour les nouvelles commandes
+    document.addEventListener('newOrder', handleNewOrder);
     document.addEventListener('storeView', handleStoreView);
 
+    // Mettre à jour les statistiques au chargement
     handleNewOrder();
 
     return () => {
       window.removeEventListener('storage', handleNewOrder);
+      document.removeEventListener('newOrder', handleNewOrder);
       document.removeEventListener('storeView', handleStoreView);
     };
   }, []);

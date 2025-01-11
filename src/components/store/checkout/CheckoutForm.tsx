@@ -55,10 +55,19 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
         name: item.name,
         quantity: item.quantity,
         price: item.discount.finalPrice || item.price
-      }))
+      })),
+      status: "non traité",
+      date: new Date().toISOString(),
+      id: Date.now().toString()
     };
 
-    localStorage.setItem('pendingOrder', JSON.stringify(order));
+    // Sauvegarder la commande dans le localStorage
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const updatedOrders = [...existingOrders, order];
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+
+    // Déclencher l'événement pour mettre à jour les statistiques
+    document.dispatchEvent(new CustomEvent('newOrder'));
 
     toast({
       title: "Commande confirmée !",
@@ -67,25 +76,6 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
 
     clearCart();
     onClose();
-  };
-
-  const getPaymentMethodLabel = (method: string) => {
-    if (formData.deliveryMethod === "pickup") {
-      return "Paiement sur place";
-    }
-    return "Paiement à la livraison";
-  };
-
-  const getFilteredPaymentMethods = () => {
-    const uniqueMethods = new Set();
-    return storeData.payment_methods.filter(method => {
-      const label = getPaymentMethodLabel(method);
-      if (!uniqueMethods.has(label)) {
-        uniqueMethods.add(label);
-        return true;
-      }
-      return false;
-    });
   };
 
   return (
@@ -174,7 +164,7 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
             Méthode de paiement
           </label>
           <div className="space-y-2">
-            {getFilteredPaymentMethods().map((method) => (
+            {storeData.payment_methods.map((method) => (
               <label key={method} className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -186,7 +176,11 @@ const CheckoutForm = ({ storeData, onClose }: CheckoutFormProps) => {
                   }
                   className="rounded-full"
                 />
-                <span>{getPaymentMethodLabel(method)}</span>
+                <span>
+                  {formData.deliveryMethod === "pickup"
+                    ? "Paiement sur place"
+                    : "Paiement à la livraison"}
+                </span>
               </label>
             ))}
           </div>

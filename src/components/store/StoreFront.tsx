@@ -19,6 +19,9 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
   useEffect(() => {
     if (storeData.name) {
       localStorage.removeItem('orders');
+      localStorage.removeItem('storeStats');
+      // Trigger store view event
+      document.dispatchEvent(new CustomEvent('storeView'));
     }
   }, [storeData.name]);
 
