@@ -1,10 +1,11 @@
 import { StoreData } from "../store-creator/types";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, LayoutDashboard } from "lucide-react";
 import CartModal from "./cart/CartModal";
 import MobileNav from "./MobileNav";
 import ProductGrid from "./product-grid/ProductGrid";
+import { useNavigate } from "react-router-dom";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -12,6 +13,7 @@ interface StoreFrontProps {
 
 const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
 
   const getButtonThemeClass = () => {
     switch (storeData.theme) {
@@ -52,6 +54,14 @@ const StoreFront: React.FC<StoreFrontProps> = ({ storeData }) => {
               className="relative"
             >
               <ShoppingCart className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+              Tableau de bord
             </Button>
           </div>
         </div>
