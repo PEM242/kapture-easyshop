@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { StatsService } from "@/services/StatsService";
+import { StoreData } from "@/components/store-creator/types";
 
-export const useHomeStats = () => {
-  const [stats, setStats] = useState(StatsService.getInitialStats());
+export const useHomeStats = (storeData: StoreData) => {
+  const [stats, setStats] = useState(StatsService.getStoreStats(storeData.name));
 
   useEffect(() => {
     const handleNewOrder = () => {
-      const newStats = StatsService.updateStats();
+      const newStats = StatsService.updateStats(storeData.name);
       setStats(newStats);
     };
 
     const handleStoreView = () => {
-      const newStats = StatsService.incrementViews();
+      const newStats = StatsService.incrementViews(storeData.name);
       setStats(newStats);
     };
 
@@ -34,7 +35,7 @@ export const useHomeStats = () => {
       document.removeEventListener('newOrder', handleNewOrder);
       document.removeEventListener('storeView', handleStoreView);
     };
-  }, []);
+  }, [storeData.name]);
 
   return stats;
 };

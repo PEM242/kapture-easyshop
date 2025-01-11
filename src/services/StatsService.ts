@@ -9,6 +9,8 @@ interface StoreStats {
 }
 
 export const StatsService = {
+  getStorePrefix: (storeName: string) => `store_${storeName}_`,
+
   getInitialStats: (): StoreStats => ({
     totalOrders: 0,
     pendingOrders: 0,
@@ -16,13 +18,21 @@ export const StatsService = {
     orderHistory: [],
   }),
 
-  updateStats: () => {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    const processedOrders = orders.filter((order: any) => order.status === 'traité').length;
-    const pendingOrders = orders.filter((order: any) => order.status === 'non traité').length;
+  getStoreStats: (storeName: string): StoreStats => {
+    const prefix = StatsService.getStorePrefix(storeName);
+    const savedStats = localStorage.getItem(`${prefix}stats`);
+    return savedStats ? JSON.parse(savedStats) : StatsService.getInitialStats();
+  },
 
-    const savedStats = localStorage.getItem('storeStats');
-    const currentStats = savedStats ? JSON.parse(savedStats) : StatsService.getInitialStats();
+  updateStats: (storeName: string) => {
+    const prefix = StatsService.getStorePrefix(storeName);
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const storeOrders = orders.filter((order: any) => order.storeName === storeName);
+    
+    const processedOrders = storeOrders.filter((order: any) => order.status === 'traité').length;
+    const pendingOrders = storeOrders.filter((order: any) => order.status === 'non traité').length;
+
+    const currentStats = StatsService.getStoreStats(storeName);
 
     const newStats = {
       ...currentStats,
@@ -37,20 +47,20 @@ export const StatsService = {
       ],
     };
 
-    localStorage.setItem('storeStats', JSON.stringify(newStats));
+    localStorage.setItem(`${prefix}stats`, JSON.stringify(newStats));
     return newStats;
   },
 
-  incrementViews: () => {
-    const savedStats = localStorage.getItem('storeStats');
-    const currentStats = savedStats ? JSON.parse(savedStats) : StatsService.getInitialStats();
+  incrementViews: (storeName: string) => {
+    const prefix = StatsService.getStorePrefix(storeName);
+    const currentStats = StatsService.getStoreStats(storeName);
 
     const newStats = {
       ...currentStats,
       totalViews: currentStats.totalViews + 1,
     };
 
-    localStorage.setItem('storeStats', JSON.stringify(newStats));
+    localStorage.setItem(`${prefix}stats`, JSON.stringify(newStats));
     return newStats;
   }
 };
