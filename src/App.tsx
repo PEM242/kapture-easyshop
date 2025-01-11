@@ -63,8 +63,12 @@ const App = () => {
   useEffect(() => {
     const savedStoreData = localStorage.getItem('storeData');
     if (savedStoreData) {
-      const parsedData = JSON.parse(savedStoreData);
-      setStoreData(parsedData);
+      try {
+        const parsedData = JSON.parse(savedStoreData);
+        setStoreData(parsedData);
+      } catch (error) {
+        console.error('Error parsing stored data:', error);
+      }
     }
   }, []);
 
@@ -90,33 +94,17 @@ const App = () => {
               />
               <Route 
                 path="/store/:storeName" 
-                element={
-                  storeData.name ? (
-                    <StoreFront storeData={storeData} showDashboardButton={true} />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                } 
+                element={<StoreFront storeData={storeData} showDashboardButton={true} />}
               />
               <Route 
                 path="/s/:storeName" 
-                element={
-                  storeData.name ? (
-                    <StoreFront storeData={storeData} showDashboardButton={false} />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                } 
+                element={<StoreFront storeData={storeData} showDashboardButton={false} />}
               />
               <Route 
                 path="/dashboard" 
                 element={
                   <PrivateRoute>
-                    {storeData.name ? (
-                      <Dashboard storeData={storeData} onUpdateStore={handleStoreDataUpdate} />
-                    ) : (
-                      <Navigate to="/" />
-                    )}
+                    <Dashboard storeData={storeData} onUpdateStore={handleStoreDataUpdate} />
                   </PrivateRoute>
                 } 
               />
