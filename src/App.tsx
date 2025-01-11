@@ -45,28 +45,53 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
   const { storeName } = useParams();
   const [storeData, setStoreData] = useState<StoreData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStore = async () => {
-      if (!storeName) return;
-      
-      const { data: store, error } = await supabase
-        .from('stores')
-        .select('*')
-        .eq('name', decodeURIComponent(storeName))
-        .single();
-
-      if (error) {
-        console.error('Error fetching store:', error);
+      if (!storeName) {
+        setError("Nom de boutique manquant");
         setLoading(false);
         return;
       }
+      
+      try {
+        console.log("Fetching store:", decodeURIComponent(storeName));
+        
+        const { data: store, error: storeError } = await supabase
+          .from('stores')
+          .select('*')
+          .eq('name', decodeURIComponent(storeName))
+          .single();
 
-      if (store) {
-        const { data: products } = await supabase
+        if (storeError) {
+          console.error('Error fetching store:', storeError);
+          setError(storeError.message);
+          setLoading(false);
+          return;
+        }
+
+        if (!store) {
+          setError("Boutique non trouvée");
+          setLoading(false);
+          return;
+        }
+
+        console.log("Store found:", store);
+
+        const { data: products, error: productsError } = await supabase
           .from('products')
           .select('*')
           .eq('store_id', store.id);
+
+        if (productsError) {
+          console.error('Error fetching products:', productsError);
+          setError(productsError.message);
+          setLoading(false);
+          return;
+        }
+
+        console.log("Products found:", products);
 
         setStoreData({
           type: store.type,
@@ -111,15 +136,23 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
             } : undefined,
           })) || [],
         });
+        setLoading(false);
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        setError("Une erreur inattendue s'est produite");
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchStore();
   }, [storeName]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
+  }
+
+  if (error) {
+    return <div>Erreur: {error}</div>;
   }
 
   if (!storeData) {
