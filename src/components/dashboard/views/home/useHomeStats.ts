@@ -4,10 +4,12 @@ import { StoreData } from "@/components/store-creator/types";
 
 export const useHomeStats = (storeData: StoreData) => {
   const [stats, setStats] = useState(() => 
-    StatsService.getStoreStats(storeData.name)
+    StatsService.getStoreStats(storeData?.name || '')
   );
 
   useEffect(() => {
+    if (!storeData?.name) return;
+
     const handleNewOrder = () => {
       const newStats = StatsService.updateStats(storeData.name);
       setStats(newStats);
@@ -18,26 +20,27 @@ export const useHomeStats = (storeData: StoreData) => {
       setStats(newStats);
     };
 
+    // Initial stats update
+    handleNewOrder();
+
     // Listen for localStorage changes
-    window.addEventListener('storage', (e) => {
+    const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'orders') {
         handleNewOrder();
       }
-    });
+    };
 
     // Listen for custom events
+    window.addEventListener('storage', handleStorageChange);
     document.addEventListener('newOrder', handleNewOrder);
     document.addEventListener('storeView', handleStoreView);
 
-    // Update stats on load
-    handleNewOrder();
-
     return () => {
-      window.removeEventListener('storage', handleNewOrder);
+      window.removeEventListener('storage', handleStorageChange);
       document.removeEventListener('newOrder', handleNewOrder);
       document.removeEventListener('storeView', handleStoreView);
     };
-  }, [storeData.name]);
+  }, [storeData?.name]);
 
   return stats;
 };
