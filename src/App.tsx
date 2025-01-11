@@ -92,7 +92,17 @@ const App = () => {
                 path="/store/:storeName" 
                 element={
                   storeData.name ? (
-                    <StoreFront storeData={storeData} />
+                    <StoreFront storeData={storeData} showDashboardButton={true} />
+                  ) : (
+                    <Navigate to="/" />
+                  )
+                } 
+              />
+              <Route 
+                path="/s/:storeName" 
+                element={
+                  storeData.name ? (
+                    <StoreFront storeData={storeData} showDashboardButton={false} />
                   ) : (
                     <Navigate to="/" />
                   )

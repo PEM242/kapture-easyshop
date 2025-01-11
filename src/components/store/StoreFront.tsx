@@ -14,9 +14,10 @@ import { useStoreReset } from "@/hooks/useStoreReset";
 
 interface StoreFrontProps {
   storeData: StoreData;
+  showDashboardButton?: boolean;
 }
 
-const StoreFront = ({ storeData }: StoreFrontProps) => {
+const StoreFront = ({ storeData, showDashboardButton = true }: StoreFrontProps) => {
   const navigate = useNavigate();
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -27,7 +28,6 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
-    // Increment store views
     document.dispatchEvent(new CustomEvent('storeView'));
 
     return () => {
@@ -62,13 +62,15 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
         themeClasses={getThemeClasses('text')}
       />
 
-      <Button
-        onClick={() => navigate('/dashboard')}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 shadow-lg"
-      >
-        <LayoutDashboard className="mr-2 h-4 w-4" />
-        Tableau de bord
-      </Button>
+      {showDashboardButton && (
+        <Button
+          onClick={() => navigate('/dashboard')}
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 shadow-lg"
+        >
+          <LayoutDashboard className="mr-2 h-4 w-4" />
+          Tableau de bord
+        </Button>
+      )}
 
       <CartModal 
         open={isCartOpen}
