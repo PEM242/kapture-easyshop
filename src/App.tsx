@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { useState, useEffect } from "react";
 import { StoreData } from "./components/store-creator/types";
 import { supabase } from "@/integrations/supabase/client";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import StoreFront from "./components/store/StoreFront";
@@ -75,44 +76,46 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route 
-              path="/" 
-              element={
-                <PrivateRoute>
-                  <Index storeData={storeData} setStoreData={handleStoreDataUpdate} />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/store" 
-              element={
-                storeData.name ? (
-                  <StoreFront storeData={storeData} />
-                ) : (
-                  <Navigate to="/" />
-                )
-              } 
-            />
-            <Route 
-              path="/dashboard" 
-              element={
-                <PrivateRoute>
-                  {storeData.name ? (
-                    <Dashboard storeData={storeData} onUpdateStore={handleStoreDataUpdate} />
+        <CartProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              <Route 
+                path="/" 
+                element={
+                  <PrivateRoute>
+                    <Index storeData={storeData} setStoreData={handleStoreDataUpdate} />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/store" 
+                element={
+                  storeData.name ? (
+                    <StoreFront storeData={storeData} />
                   ) : (
                     <Navigate to="/" />
-                  )}
-                </PrivateRoute>
-              } 
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          <Toaster />
-          <Sonner />
-        </BrowserRouter>
+                  )
+                } 
+              />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <PrivateRoute>
+                    {storeData.name ? (
+                      <Dashboard storeData={storeData} onUpdateStore={handleStoreDataUpdate} />
+                    ) : (
+                      <Navigate to="/" />
+                    )}
+                  </PrivateRoute>
+                } 
+              />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+            <Toaster />
+            <Sonner />
+          </BrowserRouter>
+        </CartProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
