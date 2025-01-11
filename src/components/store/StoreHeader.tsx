@@ -11,7 +11,10 @@ const StoreHeader = ({ storeData }: StoreHeaderProps) => {
       <div className="container mx-auto px-4 py-4">
         <h1 className="text-2xl font-bold">{storeData.name}</h1>
         <p className="text-gray-600">{storeData.sector}</p>
-        <Link to="/store" className="text-blue-500 hover:underline">
+        <Link 
+          to={`/store/${encodeURIComponent(storeData.name)}`} 
+          className="text-blue-500 hover:underline"
+        >
           Voir la boutique
         </Link>
       </div>

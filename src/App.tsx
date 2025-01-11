@@ -89,7 +89,7 @@ const App = () => {
                 } 
               />
               <Route 
-                path="/store" 
+                path="/store/:storeName" 
                 element={
                   storeData.name ? (
                     <StoreFront storeData={storeData} />
