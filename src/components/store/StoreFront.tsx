@@ -8,6 +8,9 @@ import { Button } from "../ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
+import ProductGrid from "./product-grid/ProductGrid";
+import { useState } from "react";
+import CartModal from "./cart/CartModal";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -16,9 +19,13 @@ interface StoreFrontProps {
 const StoreFront = ({ storeData }: StoreFrontProps) => {
   const navigate = useNavigate();
   const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   
   // Utiliser le nouveau hook pour réinitialiser les données
   useStoreReset(storeData);
+
+  // Event listener for opening cart
+  document.addEventListener('openCart', () => setIsCartOpen(true));
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,6 +40,12 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
           themeClasses={getThemeClasses('text')}
           storeType={storeData.type}
         />
+        <div className="container mx-auto px-4 py-8">
+          <ProductGrid 
+            storeData={storeData}
+            buttonThemeClass={getThemeClasses('button')}
+          />
+        </div>
       </main>
       <StoreFooter 
         storeData={storeData} 
@@ -46,6 +59,12 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
         <LayoutDashboard className="mr-2 h-4 w-4" />
         Tableau de bord
       </Button>
+
+      <CartModal 
+        open={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        storeData={storeData}
+      />
     </div>
   );
 };
