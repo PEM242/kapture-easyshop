@@ -52,6 +52,11 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
     "Côte d'Ivoire",
   ];
 
+  const handleCountryChange = (value: string) => {
+    console.log("Changing country to:", value);
+    setStoreData({ ...storeData, country: value });
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <h2 className="text-2xl font-semibold text-center mb-8">
@@ -168,10 +173,8 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
           <div>
             <Label htmlFor="country">Pays</Label>
             <Select
-              value={storeData.country}
-              onValueChange={(value) =>
-                setStoreData({ ...storeData, country: value })
-              }
+              value={storeData.country || ""}
+              onValueChange={handleCountryChange}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionnez votre pays" />
