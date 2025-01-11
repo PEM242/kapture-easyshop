@@ -17,7 +17,11 @@ const HomeView = ({ storeData }: HomeViewProps) => {
 
   return (
     <div className="space-y-8 p-4">
-      <StatsCards stats={stats} />
+      <StatsCards 
+        totalOrders={stats.totalOrders}
+        pendingOrders={stats.pendingOrders}
+        totalViews={stats.views}
+      />
       <OrdersChart orderHistory={stats.orderHistory} />
       <ShareSection storeData={storeData} />
     </div>
