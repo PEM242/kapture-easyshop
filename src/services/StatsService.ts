@@ -1,24 +1,14 @@
-interface StoreStats {
-  totalOrders: number;
-  pendingOrders: number;
-  totalViews: number;
-  orderHistory: Array<{
-    date: string;
-    orders: number;
-  }>;
-}
-
 export const StatsService = {
-  getStorePrefix: (storeName: string) => `store_${storeName}_`,
-
-  getInitialStats: (): StoreStats => ({
+  getInitialStats: () => ({
     totalOrders: 0,
     pendingOrders: 0,
-    totalViews: 0,
-    orderHistory: [],
+    views: 0,
+    orderHistory: []
   }),
 
-  getStoreStats: (storeName: string): StoreStats => {
+  getStorePrefix: (storeName: string) => `store_${storeName}_`,
+
+  getStoreStats: (storeName: string) => {
     if (!storeName) return StatsService.getInitialStats();
     const prefix = StatsService.getStorePrefix(storeName);
     const savedStats = localStorage.getItem(`${prefix}stats`);
@@ -34,30 +24,14 @@ export const StatsService = {
     const processedOrders = storeOrders.filter((order: any) => order.status === 'traité').length;
     const pendingOrders = storeOrders.filter((order: any) => order.status === 'non traité').length;
 
-    const currentStats = StatsService.getStoreStats(storeName);
-    const today = new Date().toLocaleDateString();
-
-    // Update order history
-    let orderHistory = [...currentStats.orderHistory];
-    const todayIndex = orderHistory.findIndex(entry => entry.date === today);
-    
-    if (todayIndex >= 0) {
-      orderHistory[todayIndex].orders = processedOrders + pendingOrders;
-    } else {
-      orderHistory.push({ 
-        date: today, 
-        orders: processedOrders + pendingOrders 
-      });
-    }
-
-    // Keep only last 30 days
-    orderHistory = orderHistory.slice(-30);
-
     const newStats = {
-      ...currentStats,
+      ...StatsService.getInitialStats(),
       totalOrders: processedOrders,
       pendingOrders: pendingOrders,
-      orderHistory,
+      orderHistory: [{
+        date: new Date().toLocaleDateString(),
+        orders: processedOrders + pendingOrders
+      }]
     };
 
     localStorage.setItem(`${prefix}stats`, JSON.stringify(newStats));
@@ -71,7 +45,7 @@ export const StatsService = {
 
     const newStats = {
       ...currentStats,
-      totalViews: currentStats.totalViews + 1,
+      views: (currentStats.views || 0) + 1
     };
 
     localStorage.setItem(`${prefix}stats`, JSON.stringify(newStats));

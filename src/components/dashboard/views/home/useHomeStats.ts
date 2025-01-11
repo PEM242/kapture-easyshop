@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { StatsService } from "@/services/StatsService";
-import { StoreData } from "@/components/store-creator/types";
+import { useState, useEffect } from 'react';
+import { StatsService } from '@/services/StatsService';
+import { StoreData } from '@/components/store-creator/types';
 
 export const useHomeStats = (storeData: StoreData) => {
   const [stats, setStats] = useState(() => 
@@ -10,33 +10,24 @@ export const useHomeStats = (storeData: StoreData) => {
   useEffect(() => {
     if (!storeData?.name) return;
 
+    // Initial stats update
+    const newStats = StatsService.updateStats(storeData.name);
+    setStats(newStats);
+
     const handleNewOrder = () => {
-      const newStats = StatsService.updateStats(storeData.name);
-      setStats(newStats);
+      const updatedStats = StatsService.updateStats(storeData.name);
+      setStats(updatedStats);
     };
 
     const handleStoreView = () => {
-      const newStats = StatsService.incrementViews(storeData.name);
-      setStats(newStats);
+      const updatedStats = StatsService.incrementViews(storeData.name);
+      setStats(updatedStats);
     };
 
-    // Initial stats update
-    handleNewOrder();
-
-    // Listen for localStorage changes
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'orders') {
-        handleNewOrder();
-      }
-    };
-
-    // Listen for custom events
-    window.addEventListener('storage', handleStorageChange);
     document.addEventListener('newOrder', handleNewOrder);
     document.addEventListener('storeView', handleStoreView);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       document.removeEventListener('newOrder', handleNewOrder);
       document.removeEventListener('storeView', handleStoreView);
     };
