@@ -7,6 +7,7 @@ import { useStoreReset } from "@/hooks/useStoreReset";
 import { Button } from "../ui/button";
 import { LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
 
 interface StoreFrontProps {
   storeData: StoreData;
@@ -14,6 +15,7 @@ interface StoreFrontProps {
 
 const StoreFront = ({ storeData }: StoreFrontProps) => {
   const navigate = useNavigate();
+  const { getThemeClasses, getThemeFont } = useStoreTheme(storeData);
   
   // Utiliser le nouveau hook pour réinitialiser les données
   useStoreReset(storeData);
@@ -22,10 +24,20 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
     <div className="min-h-screen bg-background">
       <StoreHeader storeData={storeData} />
       <main>
-        <StoreCover storeData={storeData} />
-        <FeaturedProducts storeData={storeData} />
+        <StoreCover 
+          storeData={storeData} 
+          themeFont={getThemeFont()} 
+        />
+        <FeaturedProducts 
+          products={storeData.products}
+          themeClasses={getThemeClasses('text')}
+          storeType={storeData.type}
+        />
       </main>
-      <StoreFooter storeData={storeData} />
+      <StoreFooter 
+        storeData={storeData} 
+        themeClasses={getThemeClasses('footer')} 
+      />
       
       <Button
         onClick={() => navigate("/dashboard")}
