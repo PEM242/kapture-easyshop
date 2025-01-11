@@ -9,7 +9,7 @@ interface HomeViewProps {
 }
 
 const HomeView = ({ storeData }: HomeViewProps) => {
-  const stats = useHomeStats();
+  const stats = useHomeStats(storeData);
 
   return (
     <div className="space-y-6 py-6">

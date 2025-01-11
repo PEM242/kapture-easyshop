@@ -27,7 +27,7 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
     const handleOpenCart = () => setIsCartOpen(true);
     document.addEventListener('openCart', handleOpenCart);
     
-    // Incrémenter les vues de la boutique
+    // Increment store views
     document.dispatchEvent(new CustomEvent('storeView'));
 
     return () => {
@@ -39,7 +39,6 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
     <div className="min-h-screen bg-background">
       <StoreHeader 
         storeData={storeData}
-        themeClasses={getThemeClasses('text')}
       />
       <main>
         <StoreCover 
@@ -48,7 +47,6 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
         />
         <FeaturedProducts 
           products={storeData.products || []}
-          buttonThemeClass={getThemeClasses('button')}
         />
         <div className="container mx-auto px-4 py-8">
           <ProductGrid 
@@ -58,8 +56,7 @@ const StoreFront = ({ storeData }: StoreFrontProps) => {
         </div>
       </main>
       <StoreFooter 
-        storeData={storeData} 
-        themeClasses={getThemeClasses('text')}
+        storeData={storeData}
       />
 
       <Button

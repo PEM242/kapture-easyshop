@@ -3,7 +3,9 @@ import { StatsService } from "@/services/StatsService";
 import { StoreData } from "@/components/store-creator/types";
 
 export const useHomeStats = (storeData: StoreData) => {
-  const [stats, setStats] = useState(StatsService.getStoreStats(storeData.name));
+  const [stats, setStats] = useState(() => 
+    StatsService.getStoreStats(storeData.name)
+  );
 
   useEffect(() => {
     const handleNewOrder = () => {
@@ -16,18 +18,18 @@ export const useHomeStats = (storeData: StoreData) => {
       setStats(newStats);
     };
 
-    // Écouter les changements dans le localStorage
+    // Listen for localStorage changes
     window.addEventListener('storage', (e) => {
       if (e.key === 'orders') {
         handleNewOrder();
       }
     });
 
-    // Écouter les événements personnalisés
+    // Listen for custom events
     document.addEventListener('newOrder', handleNewOrder);
     document.addEventListener('storeView', handleStoreView);
 
-    // Mettre à jour les statistiques au chargement
+    // Update stats on load
     handleNewOrder();
 
     return () => {
