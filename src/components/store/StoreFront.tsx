@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import CartModal from "./cart/CartModal";
 import MobileNav from "./MobileNav";
-import ProductGrid from "./ProductGrid";
+import ProductGrid from "./product-grid/ProductGrid";
 
 interface StoreFrontProps {
   storeData: StoreData;
