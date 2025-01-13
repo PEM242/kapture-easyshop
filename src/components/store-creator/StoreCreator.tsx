@@ -42,103 +42,127 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
   useEffect(() => {
     const initializeStore = async () => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        console.error("Erreur d'authentification:", userError);
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté pour créer une boutique.",
-          variant: "destructive",
-        });
-        navigate("/auth");
-        return;
-      }
-
-      if (!user) {
-        navigate("/auth");
-        return;
-      }
-
-      console.log("Fetching stores for user:", user.id);
-
-      // Check if user already has a store
-      const { data: stores, error: storeError } = await supabase
-        .from('stores')
-        .select('*')
-        .eq('owner_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (storeError) {
-        console.error("Erreur lors de la vérification de la boutique:", storeError);
-        return;
-      }
-
-      const existingStore = stores && stores.length > 0 ? stores[0] : null;
-
-      if (existingStore) {
-        console.log("Found existing store:", existingStore);
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
         
-        // Fetch products for the existing store
-        const { data: dbProducts = [], error: productsError } = await supabase
-          .from('products')
-          .select('*')
-          .eq('store_id', existingStore.id);
-
-        if (productsError) {
-          console.error("Erreur lors de la récupération des produits:", productsError);
+        if (userError) {
+          console.error("Erreur d'authentification:", userError);
+          toast({
+            title: "Erreur",
+            description: "Vous devez être connecté pour créer une boutique.",
+            variant: "destructive",
+          });
+          navigate("/auth");
+          return;
         }
 
-        // Transform database products to match Product type
-        const transformedProducts: Product[] = dbProducts.map(dbProduct => ({
-          name: dbProduct.name,
-          price: dbProduct.price,
-          description: dbProduct.description || "",
-          images: {
-            main: dbProduct.main_image || "",
-            gallery: dbProduct.gallery_images || []
-          },
-          category: dbProduct.category || "",
-          customization: {
-            sizes: dbProduct.sizes || [],
-            colors: dbProduct.colors || [],
-            shoesSizes: dbProduct.shoes_sizes || [],
-            customSizes: dbProduct.custom_sizes || "",
-            customColors: dbProduct.custom_colors || ""
-          },
-          discount: {
-            type: dbProduct.discount_type as 'percentage' | 'fixed' | null,
-            value: dbProduct.discount_value || 0,
-            finalPrice: dbProduct.final_price || 0
-          },
-          isActive: dbProduct.is_active,
-          inStock: dbProduct.in_stock,
-          featured: dbProduct.collection_name ? {
-            collectionName: dbProduct.collection_name
-          } : undefined
-        }));
+        if (!user) {
+          navigate("/auth");
+          return;
+        }
 
-        // Merge store data with transformed products
-        setStoreData({
-          type: existingStore.type || "",
-          name: existingStore.name || "",
-          logo: existingStore.logo || "",
-          cover: existingStore.cover || "",
-          sector: existingStore.sector || "",
-          address: existingStore.address || "",
-          city: existingStore.city || "",
-          contact: existingStore.contact || "",
-          shipping_policy: existingStore.shipping_policy || "",
-          refund_policy: existingStore.refund_policy || "",
-          country: existingStore.country || "",
-          theme: existingStore.theme || "",
-          payment_methods: existingStore.payment_methods || [],
-          delivery_methods: existingStore.delivery_methods || [],
-          products: transformedProducts
+        console.log("Fetching stores for user:", user.id);
+
+        const { data: stores, error: storeError } = await supabase
+          .from('stores')
+          .select('*')
+          .eq('owner_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (storeError) {
+          console.error("Erreur lors de la vérification de la boutique:", storeError);
+          toast({
+            title: "Erreur",
+            description: "Impossible de charger les données de la boutique.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const existingStore = stores && stores.length > 0 ? stores[0] : null;
+
+        if (existingStore) {
+          console.log("Found existing store:", existingStore);
+          
+          try {
+            const { data: dbProducts = [], error: productsError } = await supabase
+              .from('products')
+              .select('*')
+              .eq('store_id', existingStore.id);
+
+            if (productsError) {
+              console.error("Erreur lors de la récupération des produits:", productsError);
+              toast({
+                title: "Attention",
+                description: "Impossible de charger les produits de la boutique.",
+                variant: "destructive",
+              });
+            }
+
+            const transformedProducts: Product[] = dbProducts.map(dbProduct => ({
+              name: dbProduct.name,
+              price: dbProduct.price,
+              description: dbProduct.description || "",
+              images: {
+                main: dbProduct.main_image || "",
+                gallery: dbProduct.gallery_images || []
+              },
+              category: dbProduct.category || "",
+              customization: {
+                sizes: dbProduct.sizes || [],
+                colors: dbProduct.colors || [],
+                shoesSizes: dbProduct.shoes_sizes || [],
+                customSizes: dbProduct.custom_sizes || "",
+                customColors: dbProduct.custom_colors || ""
+              },
+              discount: {
+                type: dbProduct.discount_type as 'percentage' | 'fixed' | null,
+                value: dbProduct.discount_value || 0,
+                finalPrice: dbProduct.final_price || 0
+              },
+              isActive: dbProduct.is_active,
+              inStock: dbProduct.in_stock,
+              featured: dbProduct.collection_name ? {
+                collectionName: dbProduct.collection_name
+              } : undefined
+            }));
+
+            setStoreData({
+              type: existingStore.type || "",
+              name: existingStore.name || "",
+              logo: existingStore.logo || "",
+              cover: existingStore.cover || "",
+              sector: existingStore.sector || "",
+              address: existingStore.address || "",
+              city: existingStore.city || "",
+              contact: existingStore.contact || "",
+              shipping_policy: existingStore.shipping_policy || "",
+              refund_policy: existingStore.refund_policy || "",
+              country: existingStore.country || "",
+              theme: existingStore.theme || "",
+              payment_methods: existingStore.payment_methods || [],
+              delivery_methods: existingStore.delivery_methods || [],
+              products: transformedProducts
+            });
+          } catch (error) {
+            console.error("Erreur inattendue lors du chargement des produits:", error);
+            toast({
+              title: "Erreur",
+              description: "Une erreur est survenue lors du chargement des produits.",
+              variant: "destructive",
+            });
+          }
+        } else {
+          console.log("No existing store found, using initial data");
+          setStoreData(initialStoreData);
+        }
+      } catch (error) {
+        console.error("Erreur inattendue lors de l'initialisation:", error);
+        toast({
+          title: "Erreur",
+          description: "Une erreur inattendue s'est produite.",
+          variant: "destructive",
         });
-      } else {
-        console.log("No existing store found, using initial data");
-        setStoreData(initialStoreData);
       }
     };
 
