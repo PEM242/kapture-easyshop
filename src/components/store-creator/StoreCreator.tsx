@@ -60,19 +60,25 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         return;
       }
 
+      console.log("Fetching stores for user:", user.id);
+
       // Check if user already has a store
-      const { data: existingStore, error: storeError } = await supabase
+      const { data: stores, error: storeError } = await supabase
         .from('stores')
         .select('*')
         .eq('owner_id', user.id)
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (storeError && storeError.code !== 'PGRST116') {
+      if (storeError) {
         console.error("Erreur lors de la vérification de la boutique:", storeError);
         return;
       }
 
+      const existingStore = stores && stores.length > 0 ? stores[0] : null;
+
       if (existingStore) {
+        console.log("Found existing store:", existingStore);
+        
         // Fetch products for the existing store
         const { data: dbProducts = [], error: productsError } = await supabase
           .from('products')
@@ -131,6 +137,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           products: transformedProducts
         });
       } else {
+        console.log("No existing store found, using initial data");
         setStoreData(initialStoreData);
       }
     };
