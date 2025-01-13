@@ -36,9 +36,14 @@ const StoreFront = ({ storeData, showDashboardButton = true }: StoreFrontProps) 
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <StoreHeader storeData={storeData} />
-      <main className="pb-20">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <StoreHeader storeData={storeData} />
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow">
         <StoreCover storeData={storeData} themeFont={getThemeFont()} />
         
         {/* Store Information Section */}
@@ -127,10 +132,13 @@ const StoreFront = ({ storeData, showDashboardButton = true }: StoreFrontProps) 
         </div>
       </main>
 
-      <StoreFooter 
-        storeData={storeData}
-        themeClasses={getThemeClasses('text')}
-      />
+      {/* Footer */}
+      <footer className="mt-auto">
+        <StoreFooter 
+          storeData={storeData}
+          themeClasses={getThemeClasses('text')}
+        />
+      </footer>
 
       {showDashboardButton && (
         <Button
