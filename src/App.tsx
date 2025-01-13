@@ -60,11 +60,13 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
         const decodedStoreName = decodeURIComponent(storeName).trim();
         console.log("Fetching store:", decodedStoreName);
         
-        const { data: store, error: storeError } = await supabase
+        const { data: stores, error: storeError } = await supabase
           .from('stores')
           .select('*')
           .eq('name', decodedStoreName)
-          .single();
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1);
 
         if (storeError) {
           console.error('Error fetching store:', storeError);
@@ -73,12 +75,14 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
           return;
         }
 
-        if (!store) {
+        if (!stores || stores.length === 0) {
+          console.log('No store found with name:', decodedStoreName);
           setError("Boutique non trouvée");
           setLoading(false);
           return;
         }
 
+        const store = stores[0];
         console.log("Store found:", store);
 
         const { data: products, error: productsError } = await supabase
