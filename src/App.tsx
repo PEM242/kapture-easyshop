@@ -88,7 +88,8 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
         const { data: products, error: productsError } = await supabase
           .from('products')
           .select('*')
-          .eq('store_id', store.id);
+          .eq('store_id', store.id)
+          .eq('is_active', true);
 
         if (productsError) {
           console.error('Error fetching products:', productsError);
