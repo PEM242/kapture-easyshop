@@ -73,7 +73,34 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
       }
 
       if (existingStore) {
-        setStoreData(existingStore);
+        // Fetch products for the existing store
+        const { data: products = [], error: productsError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('store_id', existingStore.id);
+
+        if (productsError) {
+          console.error("Erreur lors de la récupération des produits:", productsError);
+        }
+
+        // Merge store data with products
+        setStoreData({
+          type: existingStore.type || "",
+          name: existingStore.name || "",
+          logo: existingStore.logo || "",
+          cover: existingStore.cover || "",
+          sector: existingStore.sector || "",
+          address: existingStore.address || "",
+          city: existingStore.city || "",
+          contact: existingStore.contact || "",
+          shipping_policy: existingStore.shipping_policy || "",
+          refund_policy: existingStore.refund_policy || "",
+          country: existingStore.country || "",
+          theme: existingStore.theme || "",
+          payment_methods: existingStore.payment_methods || [],
+          delivery_methods: existingStore.delivery_methods || [],
+          products: products || []
+        });
       } else {
         setStoreData(initialStoreData);
       }
