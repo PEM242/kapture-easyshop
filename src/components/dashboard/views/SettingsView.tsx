@@ -22,14 +22,16 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
   const { toast } = useToast();
   
   const countries = [
-    "France",
-    "Belgique",
-    "Suisse",
-    "Canada",
-    "Maroc",
-    "Sénégal",
+    "Bénin",
+    "Burkina Faso",
+    "Cameroun",
     "Côte d'Ivoire",
-  ];
+    "Gabon",
+    "Mali",
+    "République Démocratique du Congo",
+    "République du Congo",
+    "Sénégal"
+  ].sort();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,28 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
       title: "Modifications enregistrées",
       description: "Les informations de votre boutique ont été mises à jour.",
     });
+  };
+
+  const handleCountryChange = (value: string) => {
+    try {
+      console.log("Changing country to:", value);
+      if (!value) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez sélectionner un pays valide",
+          variant: "destructive",
+        });
+        return;
+      }
+      onUpdateStore({ ...storeData, country: value });
+    } catch (error) {
+      console.error("Error updating country:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour du pays",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -106,9 +130,7 @@ const SettingsView = ({ storeData, onUpdateStore }: SettingsViewProps) => {
           <Label htmlFor="country">Pays</Label>
           <Select
             value={storeData.country}
-            onValueChange={(value) =>
-              onUpdateStore({ ...storeData, country: value })
-            }
+            onValueChange={handleCountryChange}
           >
             <SelectTrigger>
               <SelectValue placeholder="Sélectionnez votre pays" />

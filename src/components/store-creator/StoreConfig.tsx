@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { StoreData } from "./types";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,8 @@ interface StoreConfigProps {
 }
 
 const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
+  const { toast } = useToast();
+  
   const sectors = {
     retail: [
       "Mode",
@@ -43,18 +46,37 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
   };
 
   const countries = [
-    "France",
-    "Belgique",
-    "Suisse",
-    "Canada",
-    "Maroc",
-    "Sénégal",
+    "Bénin",
+    "Burkina Faso",
+    "Cameroun",
     "Côte d'Ivoire",
-  ];
+    "Gabon",
+    "Mali",
+    "République Démocratique du Congo",
+    "République du Congo",
+    "Sénégal"
+  ].sort();
 
   const handleCountryChange = (value: string) => {
-    console.log("Changing country to:", value);
-    setStoreData({ ...storeData, country: value });
+    try {
+      console.log("Changing country to:", value);
+      if (!value) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez sélectionner un pays valide",
+          variant: "destructive",
+        });
+        return;
+      }
+      setStoreData({ ...storeData, country: value });
+    } catch (error) {
+      console.error("Error updating country:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour du pays",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
