@@ -56,12 +56,14 @@ const StoreRoute = ({ showDashboardButton = true }: { showDashboardButton?: bool
       }
       
       try {
-        console.log("Fetching store:", decodeURIComponent(storeName));
+        // Ensure we're working with a clean, decoded store name
+        const decodedStoreName = decodeURIComponent(storeName).trim();
+        console.log("Fetching store:", decodedStoreName);
         
         const { data: store, error: storeError } = await supabase
           .from('stores')
           .select('*')
-          .eq('name', decodeURIComponent(storeName))
+          .eq('name', decodedStoreName)
           .single();
 
         if (storeError) {
