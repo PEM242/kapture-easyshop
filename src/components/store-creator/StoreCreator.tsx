@@ -9,7 +9,7 @@ import ProgressBar from "./ProgressBar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Store } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { StoreData } from "./types";
+import { StoreData, Product } from "./types";
 
 interface StoreCreatorProps {
   storeData: StoreData;
@@ -74,7 +74,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
       if (existingStore) {
         // Fetch products for the existing store
-        const { data: products = [], error: productsError } = await supabase
+        const { data: dbProducts = [], error: productsError } = await supabase
           .from('products')
           .select('*')
           .eq('store_id', existingStore.id);
@@ -83,7 +83,36 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           console.error("Erreur lors de la récupération des produits:", productsError);
         }
 
-        // Merge store data with products
+        // Transform database products to match Product type
+        const transformedProducts: Product[] = dbProducts.map(dbProduct => ({
+          name: dbProduct.name,
+          price: dbProduct.price,
+          description: dbProduct.description || "",
+          images: {
+            main: dbProduct.main_image || "",
+            gallery: dbProduct.gallery_images || []
+          },
+          category: dbProduct.category || "",
+          customization: {
+            sizes: dbProduct.sizes || [],
+            colors: dbProduct.colors || [],
+            shoesSizes: dbProduct.shoes_sizes || [],
+            customSizes: dbProduct.custom_sizes || "",
+            customColors: dbProduct.custom_colors || ""
+          },
+          discount: {
+            type: dbProduct.discount_type as 'percentage' | 'fixed' | null,
+            value: dbProduct.discount_value || 0,
+            finalPrice: dbProduct.final_price || 0
+          },
+          isActive: dbProduct.is_active,
+          inStock: dbProduct.in_stock,
+          featured: dbProduct.collection_name ? {
+            collectionName: dbProduct.collection_name
+          } : undefined
+        }));
+
+        // Merge store data with transformed products
         setStoreData({
           type: existingStore.type || "",
           name: existingStore.name || "",
@@ -99,7 +128,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           theme: existingStore.theme || "",
           payment_methods: existingStore.payment_methods || [],
           delivery_methods: existingStore.delivery_methods || [],
-          products: products || []
+          products: transformedProducts
         });
       } else {
         setStoreData(initialStoreData);
