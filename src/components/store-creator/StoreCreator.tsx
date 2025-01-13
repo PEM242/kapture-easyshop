@@ -163,7 +163,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             Votre boutique a été créée avec succès!
           </p>
           <Link
-            to="/store"
+            to={`/store/${encodeURIComponent(storeData.name)}`}
             className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Store className="w-5 h-5" />
