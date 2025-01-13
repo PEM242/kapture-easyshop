@@ -67,6 +67,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           .from('stores')
           .select('*')
           .eq('owner_id', user.id)
+          .eq('is_active', true)
           .order('created_at', { ascending: false });
 
         if (storeError) {
@@ -88,7 +89,8 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             const { data: dbProducts = [], error: productsError } = await supabase
               .from('products')
               .select('*')
-              .eq('store_id', existingStore.id);
+              .eq('store_id', existingStore.id)
+              .eq('is_active', true);
 
             if (productsError) {
               console.error("Erreur lors de la récupération des produits:", productsError);
@@ -101,7 +103,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
             const transformedProducts: Product[] = dbProducts.map(dbProduct => ({
               name: dbProduct.name,
-              price: dbProduct.price,
+              price: Number(dbProduct.price),
               description: dbProduct.description || "",
               images: {
                 main: dbProduct.main_image || "",
@@ -117,8 +119,8 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
               },
               discount: {
                 type: dbProduct.discount_type as 'percentage' | 'fixed' | null,
-                value: dbProduct.discount_value || 0,
-                finalPrice: dbProduct.final_price || 0
+                value: Number(dbProduct.discount_value) || 0,
+                finalPrice: Number(dbProduct.final_price) || 0
               },
               isActive: dbProduct.is_active,
               inStock: dbProduct.in_stock,
@@ -185,19 +187,21 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             return;
           }
 
-          console.log("Tentative de création de la boutique pour l'utilisateur:", user.id);
-          console.log("Données de la boutique:", storeData);
+          console.log("Creating store for user:", user.id);
+          console.log("Store data:", storeData);
 
           const storeDataForDB = {
             ...storeData,
             owner_id: user.id,
+            is_active: true
           };
 
-          delete (storeDataForDB as any).products;
+          // Remove products from store data before insertion
+          const { products, ...storeDataWithoutProducts } = storeDataForDB;
 
           const { data: store, error: storeError } = await supabase
             .from('stores')
-            .insert([storeDataForDB])
+            .insert([storeDataWithoutProducts])
             .select()
             .single();
 
@@ -211,12 +215,53 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             return;
           }
 
-          console.log("Boutique créée avec succès:", store);
+          console.log("Store created successfully:", store);
+
+          // Insert products if any
+          if (products && products.length > 0) {
+            const productsToInsert = products.map(product => ({
+              store_id: store.id,
+              name: product.name,
+              price: product.price,
+              description: product.description,
+              main_image: product.images.main,
+              gallery_images: product.images.gallery,
+              category: product.category,
+              sizes: product.customization.sizes,
+              colors: product.customization.colors,
+              shoes_sizes: product.customization.shoesSizes,
+              custom_sizes: product.customization.customSizes,
+              custom_colors: product.customization.customColors,
+              discount_type: product.discount.type,
+              discount_value: product.discount.value,
+              final_price: product.discount.finalPrice,
+              is_active: product.isActive,
+              in_stock: product.inStock,
+              collection_name: product.featured?.collectionName
+            }));
+
+            const { error: productsError } = await supabase
+              .from('products')
+              .insert(productsToInsert);
+
+            if (productsError) {
+              console.error("Error inserting products:", productsError);
+              toast({
+                title: "Attention",
+                description: "La boutique a été créée mais certains produits n'ont pas pu être ajoutés.",
+                variant: "destructive",
+              });
+            }
+          }
+
           setIsStoreCreated(true);
           toast({
             title: "Boutique créée avec succès!",
-            description: "Cliquez sur le lien ci-dessous pour visualiser votre boutique.",
+            description: "Vous allez être redirigé vers le tableau de bord.",
           });
+          
+          // Navigate to dashboard after successful creation
+          navigate("/dashboard");
         } catch (error) {
           console.error("Erreur inattendue:", error);
           toast({
@@ -299,7 +344,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             Votre boutique a été créée avec succès!
           </p>
           <Link
-            to={`/dashboard`}
+            to="/dashboard"
             className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Store className="w-5 h-5" />
