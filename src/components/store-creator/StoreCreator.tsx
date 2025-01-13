@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import StoreType from "./StoreType";
 import StoreConfig from "./StoreConfig";
@@ -16,10 +16,71 @@ interface StoreCreatorProps {
   setStoreData: (data: StoreData) => void;
 }
 
+const initialStoreData: StoreData = {
+  type: "",
+  name: "",
+  logo: "",
+  cover: "",
+  sector: "",
+  address: "",
+  city: "",
+  contact: "",
+  shipping_policy: "",
+  refund_policy: "",
+  country: "",
+  theme: "",
+  payment_methods: [],
+  delivery_methods: [],
+  products: []
+};
+
 const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isStoreCreated, setIsStoreCreated] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const initializeStore = async () => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error("Erreur d'authentification:", userError);
+        toast({
+          title: "Erreur",
+          description: "Vous devez être connecté pour créer une boutique.",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      // Check if user already has a store
+      const { data: existingStore, error: storeError } = await supabase
+        .from('stores')
+        .select('*')
+        .eq('owner_id', user.id)
+        .single();
+
+      if (storeError && storeError.code !== 'PGRST116') {
+        console.error("Erreur lors de la vérification de la boutique:", storeError);
+        return;
+      }
+
+      if (existingStore) {
+        setStoreData(existingStore);
+      } else {
+        setStoreData(initialStoreData);
+      }
+    };
+
+    initializeStore();
+  }, []);
 
   const handleNext = async () => {
     if (validateCurrentStep()) {
@@ -27,21 +88,11 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         try {
           const { data: { user }, error: userError } = await supabase.auth.getUser();
           
-          if (userError) {
+          if (userError || !user) {
             console.error("Erreur lors de la récupération de l'utilisateur:", userError);
             toast({
               title: "Erreur",
               description: "Impossible de créer la boutique. Veuillez vous reconnecter.",
-              variant: "destructive",
-            });
-            return;
-          }
-
-          if (!user) {
-            console.error("Aucun utilisateur connecté");
-            toast({
-              title: "Erreur",
-              description: "Vous devez être connecté pour créer une boutique.",
               variant: "destructive",
             });
             return;
@@ -74,8 +125,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           }
 
           console.log("Boutique créée avec succès:", store);
-
-          localStorage.setItem('storeData', JSON.stringify(storeData));
           setIsStoreCreated(true);
           toast({
             title: "Boutique créée avec succès!",
@@ -163,11 +212,11 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             Votre boutique a été créée avec succès!
           </p>
           <Link
-            to={`/store/${encodeURIComponent(storeData.name)}`}
+            to={`/dashboard`}
             className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Store className="w-5 h-5" />
-            Voir ma boutique
+            Accéder au tableau de bord
           </Link>
         </div>
       ) : (
