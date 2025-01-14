@@ -45,6 +45,9 @@ const Auth = () => {
     return error.message;
   };
 
+  // Get the current URL without the port number
+  const currentUrl = window.location.origin.replace(/:\d+$/, '');
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
@@ -72,6 +75,7 @@ const Auth = () => {
               }
             }
           }}
+          redirectTo={`${currentUrl}/auth/callback`}
           localization={{
             variables: {
               sign_in: {
