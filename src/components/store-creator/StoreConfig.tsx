@@ -2,7 +2,8 @@ import { StoreData } from "./types";
 import BasicInfoSection from "./store-config/BasicInfoSection";
 import ImageSection from "./store-config/ImageSection";
 import PolicySection from "./store-config/PolicySection";
-import { Input, Textarea } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 interface StoreConfigProps {
