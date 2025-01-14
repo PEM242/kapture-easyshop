@@ -135,10 +135,10 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
   const handleStoreDataUpdate = (updates: Partial<StoreData>) => {
     console.log("Updating store data with:", updates);
-    setStoreData((prevData) => ({
-      ...prevData,
+    setStoreData({
+      ...storeData,
       ...updates
-    }));
+    });
   };
 
   const TOTAL_STEPS = 4;
