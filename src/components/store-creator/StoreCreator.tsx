@@ -121,28 +121,17 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
     }
   };
 
-  const handleNext = () => {
-    if (step === 4) {
-      handleStoreCreation();
-    } else {
-      setStep((prev) => prev + 1);
-    }
-  };
-
-  const handleBack = () => {
-    setStep((prev) => prev - 1);
-  };
+  const TOTAL_STEPS = 4;
 
   return (
     <div className="max-w-4xl mx-auto">
-      <ProgressBar currentStep={step} />
+      <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
       
       <div className="mt-8">
         {step === 1 && (
           <StoreType
             storeData={storeData}
             setStoreData={setStoreData}
-            onNext={handleNext}
           />
         )}
         
@@ -150,8 +139,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           <StoreConfig
             storeData={storeData}
             setStoreData={setStoreData}
-            onNext={handleNext}
-            onBack={handleBack}
           />
         )}
         
@@ -159,8 +146,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           <StoreTheme
             storeData={storeData}
             setStoreData={setStoreData}
-            onNext={handleNext}
-            onBack={handleBack}
           />
         )}
         
@@ -168,9 +153,6 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
           <ProductConfig
             storeData={storeData}
             setStoreData={setStoreData}
-            onNext={handleNext}
-            onBack={handleBack}
-            isLoading={isLoading}
           />
         )}
       </div>
