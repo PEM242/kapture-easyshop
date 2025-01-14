@@ -24,7 +24,12 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         });
         return;
       }
-      onUpdate({ country: value });
+      
+      // Create a new object with just the updated country
+      const update = { country: value };
+      console.log("Updating store data with:", update);
+      onUpdate(update);
+      
     } catch (error) {
       console.error("Error updating country:", error);
       toast({
@@ -46,7 +51,12 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         });
         return;
       }
-      onUpdate({ sector: value });
+      
+      // Create a new object with just the updated sector
+      const update = { sector: value };
+      console.log("Updating store data with:", update);
+      onUpdate(update);
+      
     } catch (error) {
       console.error("Error updating sector:", error);
       toast({
@@ -64,7 +74,10 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         <Input
           id="name"
           value={storeData.name}
-          onChange={(e) => onUpdate({ name: e.target.value })}
+          onChange={(e) => {
+            console.log("Updating name to:", e.target.value);
+            onUpdate({ name: e.target.value });
+          }}
           placeholder="Ma super boutique"
         />
       </div>
