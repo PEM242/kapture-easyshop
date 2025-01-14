@@ -68,12 +68,36 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
         });
         return;
       }
-      setStoreData({ ...storeData, country: value });
+      const updatedData = { ...storeData, country: value };
+      setStoreData(updatedData);
     } catch (error) {
       console.error("Error updating country:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la mise à jour du pays",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSectorChange = (value: string) => {
+    try {
+      console.log("Changing sector to:", value);
+      if (!value) {
+        toast({
+          title: "Erreur",
+          description: "Veuillez sélectionner un secteur valide",
+          variant: "destructive",
+        });
+        return;
+      }
+      const updatedData = { ...storeData, sector: value };
+      setStoreData(updatedData);
+    } catch (error) {
+      console.error("Error updating sector:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour du secteur",
         variant: "destructive",
       });
     }
@@ -120,9 +144,7 @@ const StoreConfig = ({ storeData, setStoreData }: StoreConfigProps) => {
             <Label htmlFor="sector">Secteur d'activité</Label>
             <Select
               value={storeData.sector}
-              onValueChange={(value) =>
-                setStoreData({ ...storeData, sector: value })
-              }
+              onValueChange={handleSectorChange}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionnez votre secteur" />
