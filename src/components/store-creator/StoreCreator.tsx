@@ -133,6 +133,14 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
     setStep((prev) => prev - 1);
   };
 
+  const handleStoreDataUpdate = (updates: Partial<StoreData>) => {
+    console.log("Updating store data with:", updates);
+    setStoreData((prevData) => ({
+      ...prevData,
+      ...updates
+    }));
+  };
+
   const TOTAL_STEPS = 4;
 
   return (
@@ -143,28 +151,28 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         {step === 1 && (
           <StoreType
             storeData={storeData}
-            setStoreData={setStoreData}
+            setStoreData={handleStoreDataUpdate}
           />
         )}
         
         {step === 2 && (
           <StoreConfig
             storeData={storeData}
-            setStoreData={setStoreData}
+            setStoreData={handleStoreDataUpdate}
           />
         )}
         
         {step === 3 && (
           <StoreTheme
             storeData={storeData}
-            setStoreData={setStoreData}
+            setStoreData={handleStoreDataUpdate}
           />
         )}
         
         {step === 4 && (
           <ProductConfig
             storeData={storeData}
-            setStoreData={setStoreData}
+            setStoreData={handleStoreDataUpdate}
           />
         )}
       </div>

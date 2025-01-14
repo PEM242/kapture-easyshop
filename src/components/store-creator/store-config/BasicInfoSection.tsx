@@ -25,10 +25,7 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         return;
       }
       
-      // Create a new object with just the updated country
-      const update = { country: value };
-      console.log("Updating store data with:", update);
-      onUpdate(update);
+      onUpdate({ country: value });
       
     } catch (error) {
       console.error("Error updating country:", error);
@@ -52,10 +49,7 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         return;
       }
       
-      // Create a new object with just the updated sector
-      const update = { sector: value };
-      console.log("Updating store data with:", update);
-      onUpdate(update);
+      onUpdate({ sector: value });
       
     } catch (error) {
       console.error("Error updating sector:", error);
@@ -67,6 +61,12 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
     }
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    console.log("Updating name to:", newName);
+    onUpdate({ name: newName });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -74,10 +74,7 @@ const BasicInfoSection = ({ storeData, onUpdate }: BasicInfoSectionProps) => {
         <Input
           id="name"
           value={storeData.name}
-          onChange={(e) => {
-            console.log("Updating name to:", e.target.value);
-            onUpdate({ name: e.target.value });
-          }}
+          onChange={handleNameChange}
           placeholder="Ma super boutique"
         />
       </div>
