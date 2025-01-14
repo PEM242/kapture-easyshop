@@ -121,6 +121,18 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
     }
   };
 
+  const handleNext = () => {
+    if (step === 4) {
+      handleStoreCreation();
+    } else {
+      setStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setStep((prev) => prev - 1);
+  };
+
   const TOTAL_STEPS = 4;
 
   return (
@@ -155,6 +167,24 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
             setStoreData={setStoreData}
           />
         )}
+      </div>
+
+      <div className="mt-8 flex justify-between">
+        {step > 1 && (
+          <button
+            onClick={handleBack}
+            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+          >
+            Retour
+          </button>
+        )}
+        <button
+          onClick={handleNext}
+          disabled={isLoading}
+          className="ml-auto px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50"
+        >
+          {step === 4 ? (isLoading ? "Création..." : "Créer la boutique") : "Suivant"}
+        </button>
       </div>
     </div>
   );
