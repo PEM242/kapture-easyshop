@@ -80,6 +80,24 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
     }
   };
 
+  const handlePublish = async (product: any) => {
+    const productUrl = `${window.location.origin}/store/${storeData.name}/products/${product.id}`;
+    
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      toast({
+        title: "Lien créé et copié !",
+        description: "Le lien du produit a été copié dans le presse-papier. Vous pouvez maintenant le partager.",
+      });
+    } catch (err) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de copier le lien. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAddProduct = (product: any) => {
     const updatedStore = {
       ...storeData,
@@ -193,6 +211,14 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => handlePublish(product)}
+              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
             <Button 
               variant="ghost" 
               size="icon"
