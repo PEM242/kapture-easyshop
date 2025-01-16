@@ -1,6 +1,6 @@
 import { StoreData } from "../../store-creator/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Share2, Edit, Trash2 } from "lucide-react";
+import { Plus, Share2, Edit, Trash2, Facebook } from "lucide-react";
 import { useState } from "react";
 import ProductForm from "../../store-creator/ProductForm";
 import { useToast } from "@/hooks/use-toast";
@@ -34,6 +34,75 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
 
     return matchesSearch && matchesStock && matchesStatus;
   });
+
+  const handleShareFacebook = async (product: any) => {
+    const storeUrl = `${window.location.origin}/store/${storeData.name}/products/${product.id}`;
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(storeUrl)}`;
+    
+    // Prepare Open Graph meta tags for better Facebook sharing
+    const title = `${product.name} - ${storeData.name}`;
+    const description = product.description || "Découvrez ce produit dans notre boutique";
+    const image = product.images?.main || "";
+    
+    // Create meta tags for Facebook sharing
+    const metaTags = document.createElement('div');
+    metaTags.innerHTML = `
+      <meta property="og:title" content="${title}" />
+      <meta property="og:description" content="${description}" />
+      <meta property="og:image" content="${image}" />
+      <meta property="og:url" content="${storeUrl}" />
+      <meta property="og:type" content="product" />
+      <meta property="product:price:amount" content="${product.price}" />
+      <meta property="product:price:currency" content="EUR" />
+    `;
+    
+    // Open Facebook share dialog in a new window
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+
+    toast({
+      title: "Partage sur Facebook",
+      description: "La fenêtre de partage Facebook s'est ouverte",
+    });
+  };
+
+  const handleShare = async (product: any) => {
+    const storeUrl = `${window.location.origin}/store/${storeData.name}/products/${product.id}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: `Découvrez ${product.name} dans notre boutique`,
+          url: storeUrl,
+        });
+        toast({
+          title: "Partage réussi !",
+          description: "Le produit a été partagé avec succès.",
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          toast({
+            title: "Erreur",
+            description: "Impossible de partager le produit. Veuillez réessayer.",
+            variant: "destructive",
+          });
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(storeUrl);
+        toast({
+          title: "Lien copié !",
+          description: "Le lien du produit a été copié dans le presse-papier.",
+        });
+      } catch (err) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de copier le lien. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   const handleAddProduct = (product: any) => {
     const updatedStore = {
@@ -72,45 +141,6 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
       title: "Produit supprimé",
       description: "Le produit a été supprimé avec succès.",
     });
-  };
-
-  const handleShare = async (product: any) => {
-    const storeUrl = `${window.location.origin}/store`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: `Découvrez ${product.name} dans notre boutique`,
-          url: storeUrl,
-        });
-        toast({
-          title: "Partage réussi !",
-          description: "Le produit a été partagé avec succès.",
-        });
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
-          toast({
-            title: "Erreur",
-            description: "Impossible de partager le produit. Veuillez réessayer.",
-            variant: "destructive",
-          });
-        }
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(storeUrl);
-        toast({
-          title: "Lien copié !",
-          description: "Le lien du produit a été copié dans le presse-papier.",
-        });
-      } catch (err) {
-        toast({
-          title: "Erreur",
-          description: "Impossible de copier le lien. Veuillez réessayer.",
-          variant: "destructive",
-        });
-      }
-    }
   };
 
   if (showAddProduct) {
@@ -187,6 +217,14 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => handleShareFacebook(product)}
+              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            >
+              <Facebook className="h-4 w-4" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => handleShare(product)}>
               <Share2 className="h-4 w-4" />
             </Button>
