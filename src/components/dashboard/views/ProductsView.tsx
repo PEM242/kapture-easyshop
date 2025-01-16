@@ -5,6 +5,7 @@ import { useState } from "react";
 import ProductForm from "../../store-creator/ProductForm";
 import { useToast } from "@/hooks/use-toast";
 import ProductFilters from "./products/ProductFilters";
+import FacebookShareDialog from "./products/FacebookShareDialog";
 
 interface ProductsViewProps {
   storeData: StoreData;
@@ -14,6 +15,7 @@ interface ProductsViewProps {
 const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<{ index: number; product: any } | null>(null);
+  const [sharingProduct, setSharingProduct] = useState<any>(null);
   const { toast } = useToast();
 
   // Filtres
@@ -35,34 +37,8 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
     return matchesSearch && matchesStock && matchesStatus;
   });
 
-  const handleShareFacebook = async (product: any) => {
-    const storeUrl = `${window.location.origin}/store/${storeData.name}/products/${product.id}`;
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(storeUrl)}`;
-    
-    // Prepare Open Graph meta tags for better Facebook sharing
-    const title = `${product.name} - ${storeData.name}`;
-    const description = product.description || "Découvrez ce produit dans notre boutique";
-    const image = product.images?.main || "";
-    
-    // Create meta tags for Facebook sharing
-    const metaTags = document.createElement('div');
-    metaTags.innerHTML = `
-      <meta property="og:title" content="${title}" />
-      <meta property="og:description" content="${description}" />
-      <meta property="og:image" content="${image}" />
-      <meta property="og:url" content="${storeUrl}" />
-      <meta property="og:type" content="product" />
-      <meta property="product:price:amount" content="${product.price}" />
-      <meta property="product:price:currency" content="EUR" />
-    `;
-    
-    // Open Facebook share dialog in a new window
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-
-    toast({
-      title: "Partage sur Facebook",
-      description: "La fenêtre de partage Facebook s'est ouverte",
-    });
+  const handleShareFacebook = (product: any) => {
+    setSharingProduct(product);
   };
 
   const handleShare = async (product: any) => {
@@ -253,6 +229,16 @@ const ProductsView = ({ storeData, onUpdateStore }: ProductsViewProps) => {
       >
         <Plus className="mr-2 h-4 w-4" /> Ajouter un produit
       </Button>
+
+      {sharingProduct && (
+        <FacebookShareDialog
+          open={Boolean(sharingProduct)}
+          onClose={() => setSharingProduct(null)}
+          product={sharingProduct}
+          storeName={storeData.name}
+          storeUrl={`${window.location.origin}/store/${storeData.name}/products/${sharingProduct.id}`}
+        />
+      )}
     </div>
   );
 };
