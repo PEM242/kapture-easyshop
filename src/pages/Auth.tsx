@@ -46,7 +46,11 @@ const Auth = () => {
   };
 
   // Get the current URL and ensure it's properly formatted
-  const currentUrl = window.location.origin.replace(/:\d+$/, '').replace(/\/$/, '');
+  const currentUrl = window.location.origin
+    .replace(/:\d+$/, '')  // Remove port if present
+    .replace(/\/$/, '')    // Remove trailing slash
+    .replace(/:$/, '');    // Remove trailing colon
+    
   const redirectUrl = `${currentUrl}/auth/callback`;
   
   console.log("Auth redirect URL:", redirectUrl); // For debugging
