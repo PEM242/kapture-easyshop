@@ -45,8 +45,11 @@ const Auth = () => {
     return error.message;
   };
 
-  // Get the current URL without the port number
-  const currentUrl = window.location.origin.replace(/:\d+$/, '');
+  // Get the current URL and ensure it's properly formatted
+  const currentUrl = window.location.origin.replace(/:\d+$/, '').replace(/\/$/, '');
+  const redirectUrl = `${currentUrl}/auth/callback`;
+  
+  console.log("Auth redirect URL:", redirectUrl); // For debugging
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -75,7 +78,7 @@ const Auth = () => {
               }
             }
           }}
-          redirectTo={`${currentUrl}/auth/callback`}
+          redirectTo={redirectUrl}
           localization={{
             variables: {
               sign_in: {
