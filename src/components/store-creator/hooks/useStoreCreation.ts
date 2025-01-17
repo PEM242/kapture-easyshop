@@ -90,13 +90,14 @@ export const useStoreCreation = () => {
         console.log("Products created successfully");
       }
 
-      // Ensure proper URL encoding and navigation
-      const storeName = encodeURIComponent(storeData.name.trim());
-      const storeUrl = `/s/${storeName}`;
+      // Clean and encode store name
+      const cleanStoreName = storeData.name.trim().replace(/\s+/g, '-');
+      const encodedStoreName = encodeURIComponent(cleanStoreName);
+      const storeUrl = `/s/${encodedStoreName}`;
       
-      console.log("Store name:", storeData.name);
-      console.log("Encoded store name:", storeName);
-      console.log("Redirecting to:", storeUrl);
+      console.log("Clean store name:", cleanStoreName);
+      console.log("Encoded store name:", encodedStoreName);
+      console.log("Store URL:", storeUrl);
 
       // Show success toast
       toast({
@@ -104,8 +105,12 @@ export const useStoreCreation = () => {
         description: "Redirection vers votre boutique...",
       });
 
-      // Navigate immediately after successful creation
-      navigate(storeUrl, { replace: true });
+      // Navigate with a slight delay to ensure toast is visible
+      setTimeout(() => {
+        console.log("Navigating to:", storeUrl);
+        navigate(storeUrl, { replace: true });
+      }, 100);
+
       return { success: true };
 
     } catch (error) {
