@@ -49,6 +49,7 @@ export const useStoreCreation = () => {
         .single();
 
       if (storeError) {
+        console.error("Store creation error:", storeError);
         throw storeError;
       }
 
@@ -82,6 +83,7 @@ export const useStoreCreation = () => {
           .insert(productsToInsert);
 
         if (productsError) {
+          console.error("Products creation error:", productsError);
           throw productsError;
         }
 
@@ -89,20 +91,22 @@ export const useStoreCreation = () => {
       }
 
       // Ensure proper URL encoding and navigation
-      const storeName = storeData.name.trim();
-      const encodedStoreName = encodeURIComponent(storeName);
-      const storeUrl = `/s/${encodedStoreName}`;
+      const storeName = encodeURIComponent(storeData.name.trim());
+      const storeUrl = `/s/${storeName}`;
       
-      console.log("Store name:", storeName);
-      console.log("Encoded store name:", encodedStoreName);
+      console.log("Store name:", storeData.name);
+      console.log("Encoded store name:", storeName);
       console.log("Redirecting to:", storeUrl);
 
+      // Show success toast
       toast({
         title: "Boutique créée avec succès !",
         description: "Redirection vers votre boutique...",
       });
 
-      return { success: true, storeUrl };
+      // Navigate immediately after successful creation
+      navigate(storeUrl, { replace: true });
+      return { success: true };
 
     } catch (error) {
       console.error("Error creating store:", error);

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import StoreType from "./StoreType";
 import StoreConfig from "./StoreConfig";
 import StoreTheme from "./StoreTheme";
@@ -15,15 +14,12 @@ interface StoreCreatorProps {
 
 const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const [step, setStep] = useState(1);
-  const navigate = useNavigate();
   const { handleStoreCreation, isLoading } = useStoreCreation();
 
   const handleNext = async () => {
     if (step === 4) {
-      const result = await handleStoreCreation(storeData);
-      if (result.success && result.storeUrl) {
-        navigate(result.storeUrl);
-      }
+      console.log("Creating store with data:", storeData);
+      await handleStoreCreation(storeData);
     } else {
       setStep((prev) => prev + 1);
     }
