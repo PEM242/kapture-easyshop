@@ -45,14 +45,15 @@ const Auth = () => {
     return error.message;
   };
 
-  // Get the current URL and ensure it's properly formatted
+  // Get the base URL without any trailing characters that could cause issues
   const currentUrl = window.location.origin
-    .replace(/:\d+$/, '')  // Remove port if present
-    .replace(/\/$/, '')    // Remove trailing slash
-    .replace(/:$/, '');    // Remove trailing colon
+    .replace(/:\d+$/, '')     // Remove port number if present
+    .replace(/[:/]+$/, '')    // Remove any trailing colons or slashes
+    .replace(/\/+$/, '');     // Ensure no trailing slashes
     
   const redirectUrl = `${currentUrl}/auth/callback`;
   
+  console.log("Auth base URL:", currentUrl); // For debugging
   console.log("Auth redirect URL:", redirectUrl); // For debugging
   
   return (
