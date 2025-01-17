@@ -101,12 +101,18 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
 
       toast({
         title: "Boutique créée avec succès !",
-        description: "Redirection vers votre tableau de bord...",
+        description: "Redirection vers votre boutique...",
       });
 
-      // Navigate to the store page
+      // Ensure proper URL encoding and navigation
+      const encodedStoreName = encodeURIComponent(storeData.name.trim());
+      const storeUrl = `/store/${encodedStoreName}`;
+      
+      console.log("Redirecting to:", storeUrl);
+      
+      // Use a short timeout to ensure the toast is visible
       setTimeout(() => {
-        navigate(`/store/${encodeURIComponent(storeData.name)}`);
+        navigate(storeUrl, { replace: true });
       }, 1500);
 
     } catch (error) {
@@ -144,7 +150,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
   const TOTAL_STEPS = 4;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
       <ProgressBar currentStep={step} totalSteps={TOTAL_STEPS} />
       
       <div className="mt-8">
@@ -177,7 +183,7 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         )}
       </div>
 
-      <div className="mt-8 flex justify-between">
+      <div className="mt-8 flex justify-between pb-8">
         {step > 1 && (
           <button
             onClick={handleBack}
