@@ -99,21 +99,22 @@ const StoreCreator = ({ storeData, setStoreData }: StoreCreatorProps) => {
         console.log("Products created successfully");
       }
 
+      // Ensure proper URL encoding and navigation
+      const storeName = storeData.name.trim();
+      const encodedStoreName = encodeURIComponent(storeName);
+      const storeUrl = `/s/${encodedStoreName}`;
+      
+      console.log("Store name:", storeName);
+      console.log("Encoded store name:", encodedStoreName);
+      console.log("Redirecting to:", storeUrl);
+      
       toast({
         title: "Boutique créée avec succès !",
         description: "Redirection vers votre boutique...",
       });
 
-      // Ensure proper URL encoding and navigation
-      const encodedStoreName = encodeURIComponent(storeData.name.trim());
-      const storeUrl = `/store/${encodedStoreName}`;
-      
-      console.log("Redirecting to:", storeUrl);
-      
-      // Use a short timeout to ensure the toast is visible
-      setTimeout(() => {
-        navigate(storeUrl, { replace: true });
-      }, 1500);
+      // Navigate immediately after successful creation
+      navigate(storeUrl);
 
     } catch (error) {
       console.error("Error creating store:", error);
